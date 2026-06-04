@@ -1,0 +1,11 @@
+model_list:
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: ollama/llama3.1
+      api_base: http://127.0.0.1:11434
+
+general_settings:
+  master_key: YOUR_API_KEY
+
+litellm_settings:
+  set_verbose: false
