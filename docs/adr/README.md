@@ -43,6 +43,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 | ADR | Titre | Statut | Date | Domaine |
 |-----|-------|--------|------|------|
 | [000](./000-META-processus-creation-adr.md) | Processus de Création et Gestion des ADR | ✅ Accepté | 2026-06-04 | Gouvernance |
+| [001](./001-META-adoption-scrum.md) | Adoption de Scrum pour la gestion du projet | ✅ Accepté | 2026-06-05 | Méthodologie |
 
 ---
 
@@ -118,12 +119,12 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 
 | Indicateur | Valeur |
 |-----------|--------|
-| **Total ADRs** | 6 |
-| **Acceptés** | 6 |
+| **Total ADRs** | 7 |
+| **Acceptés** | 7 |
 | **Supersédés** | 0 |
 | **Proposés** | 0 |
 | **Brouillons** | 0 |
-| **Par Domaine** | META: 1, DEVOPS: 5 |
+| **Par Domaine** | META: 2, DEVOPS: 5 |
 
 ---
 
@@ -131,7 +132,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 
 | Préfixe | Plage | Domaine | Prochains disponibles |
 |---------|-------|---------|----------------------|
-| `META` | 000-099 | Méta-processus | 001 |
+| `META` | 000-099 | Méta-processus | 002 |
 | `ARCH` | 100-199 | Architecture gateway & flux de données | 100 |
 | `INFRA` | 200-299 | Infrastructure Azure, déploiement, networking | 200 |
 | `SEC` | 300-399 | Sécurité, authentification, TLS | 300 |

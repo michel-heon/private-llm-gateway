@@ -25,7 +25,7 @@ GitHub Copilot Chat / VS Code BYOK
   -> Ollama local model runtime
 ```
 
-See `/docs/architecture.md`.
+See [/docs/architecture/overview.md](/docs/architecture/overview.md).
 
 ## Supported use cases
 
@@ -60,7 +60,7 @@ See `/docs/architecture.md`.
 - Use least privilege for Azure identity, relay, and deployment credentials.
 - Do not commit secrets; use environment variables and secret stores.
 
-See `/docs/security.md`.
+See [/docs/reference/security.md](/docs/reference/security.md).
 
 ## Quick start overview
 
