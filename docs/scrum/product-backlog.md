@@ -1,6 +1,6 @@
 # Product Backlog — Private LLM Gateway
 
-Product Backlog combinant **Epics** et **User Stories** pour le projet Private LLM Gateway.  
+**Organisation** : Index principal du backlog avec liens vers fichiers individuels.  
 Priorisation selon méthode **MoSCoW** (Must, Should, Could, Won't).
 
 ---
@@ -9,11 +9,12 @@ Priorisation selon méthode **MoSCoW** (Must, Should, Could, Won't).
 
 | Métrique | Valeur |
 |----------|--------|
-| **Total Epics** | 5 |
-| **Total User Stories** | 23 |
-| **Must Have** | 12 stories |
-| **Should Have** | 7 stories |
-| **Could Have** | 4 stories |
+| **Total Épopées** | 5 |
+| **Total Récits** | 23 |
+| **Must Have** | 12 récits |
+| **Should Have** | 7 récits |
+| **Could Have** | 4 récits |
+| **Points Totaux** | ~140 story points |
 
 **Prochains sprints planifiés** :
 - **Sprint 1** (2026-06-05 → 2026-06-19) : Epic 1 (macMLX) + Epic 2 (DevOps) 
@@ -22,438 +23,131 @@ Priorisation selon méthode **MoSCoW** (Must, Should, Could, Won't).
 
 ---
 
-## 🎯 Epic 1 : Support macMLX Complet
+## 📁 Structure du Backlog
+
+```
+docs/scrum/backlog/
+├── Épopées/              # 5 épopées
+│   ├── EPOP-001-support-macmlx.md
+│   ├── EPOP-002-patterns-devops.md
+│   ├── EPOP-003-securite.md
+│   ├── EPOP-004-infrastructure-as-code.md
+│   └── EPOP-005-observabilite-monitoring.md
+└── Récits/               # 23 récits utilisateurs
+    ├── RECIT-101-doc-macmlx.md
+    ├── RECIT-102-scripts-macmlx.md
+    ├── ...
+    └── RECIT-504-logs-json.md
+```
+
+---
+
+## 🎯 [Epic 1 : Support macMLX Complet](backlog/Épopées/EPOP-001-support-macmlx.md)
 
 **Objectif** : Offrir macMLX comme alternative performante à Ollama sur Apple Silicon  
-**Personas** : Alex (Développeur), Sam (Utilisateur)  
 **Valeur Métier** : 2x speedup pour les utilisateurs Mac M1/M2/M3/M4  
-**Statut** : 🟢 En cours
+**Points** : 23 | **Statut** : 🟢 En cours
 
-### User Stories
+### Récits Utilisateurs
 
-#### US-101 : Documenter installation et configuration macMLX
-**En tant que** développeur sur Mac Apple Silicon  
-**Je veux** une documentation claire pour installer macMLX  
-**Afin de** remplacer Ollama par une solution 2x plus rapide
+| ID | Titre | Priorité | Effort | Sprint | Statut |
+|----|-------|----------|--------|--------|--------|
+| [RECIT-101](backlog/Récits/RECIT-101-doc-macmlx.md) | Documenter installation macMLX | Must Have | 2 pts | S1 | ✅ Complété |
+| [RECIT-102](backlog/Récits/RECIT-102-scripts-macmlx.md) | Créer scripts start/stop macMLX | Must Have | 3 pts | S1 | 📋 To Do |
+| [RECIT-103](backlog/Récits/RECIT-103-litellm-macmlx.md) | Configurer LiteLLM pour macMLX | Must Have | 5 pts | S1 | 📋 To Do |
+| [RECIT-104](backlog/Récits/RECIT-104-tests-validation.md) | Tester end-to-end VS Code → macMLX | Must Have | 8 pts | S1 | 📋 To Do |
+| [RECIT-105](backlog/Récits/RECIT-105-benchmark-perf.md) | Benchmark Ollama vs macMLX | Should Have | 5 pts | S2 | 📋 To Do |
 
-**Acceptance Criteria** :
-- [ ] Guide installation macMLX dans `docs/guides/setup/litellm-ollama.md` ✅ FAIT
-- [ ] Comparaison Ollama vs macMLX (tableau performance) ✅ FAIT
-- [ ] Configuration LiteLLM pour port 8080 ✅ FAIT
-- [ ] Benchmark M2 Max documenté ✅ FAIT
-
-**Priorité** : Must Have  
-**Effort** : 2 points  
-**Sprint** : Sprint 1  
-**Statut** : ✅ **Complété** (2026-06-05)
+**Total Epic 1** : 23 points
 
 ---
 
-#### US-102 : Créer script de démarrage macMLX
-**En tant que** développeur  
-**Je veux** un script shell pour démarrer macMLX facilement  
-**Afin de** éviter de mémoriser les commandes CLI
+## 🛠️ [Epic 2 : Patterns DevOps Standardisés](backlog/Épopées/EPOP-002-patterns-devops.md)
 
-**Acceptance Criteria** :
-- [ ] Script `scripts/start-macmlx.sh` créé
-- [ ] Supporte options `--model`, `--port`, `--verbose`
-- [ ] Gère les erreurs (macMLX non installé, port occupé)
-- [ ] Suit la nomenclature ADR-601 (`{object}-{action}.sh`)
+**Objectif** : Uniformiser scripts, configuration, et workflows  
+**Valeur Métier** : Réduction friction onboarding et maintenance  
+**Points** : 27 | **Statut** : 🟡 Planifié
 
-**Priorité** : Must Have  
-**Effort** : 3 points  
-**Sprint** : Sprint 1  
-**Statut** : 📋 To Do
+### Récits Utilisateurs
 
----
+| ID | Titre | Priorité | Effort | Sprint | Statut |
+|----|-------|----------|--------|--------|--------|
+| [RECIT-201](backlog/Récits/RECIT-201-bootstrap-config.md) | Bootstrap configuration multi-format | Must Have | 8 pts | S1 | 📋 To Do |
+| [RECIT-202](backlog/Récits/RECIT-202-makefile-orchestrateur.md) | Makefile orchestrateur principal | Must Have | 8 pts | S1 | 📋 To Do |
+| [RECIT-203](backlog/Récits/RECIT-203-nomenclature-scripts.md) | Standardiser nomenclature scripts | Should Have | 3 pts | S1 | 📋 To Do |
+| [RECIT-204](backlog/Récits/RECIT-204-couleurs-ansi.md) | Ajouter couleurs ANSI aux scripts | Should Have | 3 pts | S2 | 📋 To Do |
+| [RECIT-205](backlog/Récits/RECIT-205-parsing-options-bash.md) | Parsing options Bash standard | Should Have | 5 pts | S2 | 📋 To Do |
 
-#### US-103 : Ajouter cible Makefile pour macMLX
-**En tant que** développeur  
-**Je veux** une commande `make macmlx-start`  
-**Afin de** unifier le lancement avec les autres services
-
-**Acceptance Criteria** :
-- [ ] Cible `macmlx-start` dans Makefile
-- [ ] Cible `macmlx-stop` pour arrêter proprement
-- [ ] Cible `macmlx-status` pour vérifier l'état
-- [ ] Respecte ADR-602 (Makefile orchestrateur)
-
-**Priorité** : Should Have  
-**Effort** : 2 points  
-**Sprint** : Sprint 1  
-**Statut** : 📋 To Do
+**Total Epic 2** : 27 points
 
 ---
 
-#### US-104 : Adapter configuration LiteLLM pour dual runtime
-**En tant que** développeur  
-**Je veux** pouvoir switcher facilement entre Ollama et macMLX  
-**Afin de** comparer les performances ou utiliser selon le contexte
+## 🔐 [Epic 3 : Sécurité Production-Ready](backlog/Épopées/EPOP-003-securite.md)
 
-**Acceptance Criteria** :
-- [ ] Variable d'environnement `LLM_RUNTIME=ollama|macmlx`
-- [ ] LiteLLM route vers le bon port (11434 ou 8080)
-- [ ] Configuration yaml adaptative (config/litellm.yaml)
-- [ ] Documentation du switch dans README
+**Objectif** : Protéger secrets, logs, et accès réseau  
+**Valeur Métier** : Conformité entreprise et réduction risques  
+**Points** : 23 | **Statut** : 🟡 Planifié
 
-**Priorité** : Could Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
+### Récits Utilisateurs
 
----
+| ID | Titre | Priorité | Effort | Sprint | Statut |
+|----|-------|----------|--------|--------|--------|
+| [RECIT-301](backlog/Récits/RECIT-301-azure-key-vault.md) | Intégrer Azure Key Vault pour secrets | Must Have | 8 pts | S2 | 📋 To Do |
+| [RECIT-302](backlog/Récits/RECIT-302-log-redaction.md) | Implémenter log redaction | Must Have | 5 pts | S2 | 📋 To Do |
+| [RECIT-303](backlog/Récits/RECIT-303-rate-limiting.md) | Rate limiting au proxy Azure | Must Have | 5 pts | S2 | 📋 To Do |
+| [RECIT-304](backlog/Récits/RECIT-304-threat-model.md) | Créer threat model diagram | Should Have | 5 pts | S3 | 📋 To Do |
 
-## 🛠️ Epic 2 : Implémentation Patterns DevOps (ADR 600-607)
-
-**Objectif** : Automatiser la gestion de config, scripts et Makefile  
-**Personas** : Alex (Développeur), Jordan (DevOps)  
-**Valeur Métier** : Réduction de 60% du temps de setup  
-**Statut** : 📋 To Do
-
-### User Stories
-
-#### US-201 : Implémenter bootstrap configuration multi-format
-**En tant que** développeur  
-**Je veux** un système de configuration 3 couches (.env → .env.user → formats générés)  
-**Afin de** éviter les conflits entre environnements
-
-**Acceptance Criteria** :
-- [ ] Script `scripts/config-bootstrap.sh` créé
-- [ ] Génère `env.sh`, `env.docker`, `env.mk` depuis .env
-- [ ] Respecte ADR-600 (configuration management)
-- [ ] Tests de génération avec différents .env
-
-**Priorité** : Must Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 1  
-**Statut** : 📋 To Do
+**Total Epic 3** : 23 points
 
 ---
 
-#### US-202 : Créer Makefile orchestrateur principal
-**En tant que** développeur  
-**Je veux** un Makefile avec cibles standardisées  
-**Afin de** lancer tous les composants uniformément
+## ☁️ [Epic 4 : Infrastructure as Code](backlog/Épopées/EPOP-004-infrastructure-as-code.md)
 
-**Acceptance Criteria** :
-- [ ] Makefile avec cibles : `setup`, `config`, `start`, `stop`, `test`, `clean`
-- [ ] Respecte ADR-602 (règle des 3 lignes)
-- [ ] Gère les dépendances entre cibles (ex: `start` nécessite `config`)
-- [ ] Aide intégrée `make help`
+**Objectif** : Automatiser provisionning Azure avec IaC  
+**Valeur Métier** : Reproductibilité et disaster recovery  
+**Points** : 42 | **Statut** : 🟡 Planifié
 
-**Priorité** : Must Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 1  
-**Statut** : 📋 To Do
+### Récits Utilisateurs
 
----
+| ID | Titre | Priorité | Effort | Sprint | Statut |
+|----|-------|----------|--------|--------|--------|
+| [RECIT-401](backlog/Récits/RECIT-401-bicep-relay.md) | Template Bicep pour Azure Relay | Must Have | 8 pts | S3 | 📋 To Do |
+| [RECIT-402](backlog/Récits/RECIT-402-bicep-proxy.md) | Template Bicep pour HTTPS proxy | Must Have | 13 pts | S3 | 📋 To Do |
+| [RECIT-403](backlog/Récits/RECIT-403-github-actions.md) | GitHub Actions workflow CI/CD | Should Have | 8 pts | S3 | 📋 To Do |
+| [RECIT-404](backlog/Récits/RECIT-404-terraform.md) | Alternative Terraform pour IaC | Could Have | 13 pts | S4 | 📋 To Do |
 
-#### US-203 : Standardiser nomenclature scripts existants
-**En tant que** développeur  
-**Je veux** renommer les scripts selon ADR-601  
-**Afin de** avoir une cohérence `{object}-{action}.sh`
-
-**Acceptance Criteria** :
-- [ ] Audit des scripts actuels (`scripts/`)
-- [ ] Renommage selon pattern (ex: `start-ollama.sh` → `ollama-start.sh`)
-- [ ] Mise à jour des références dans Makefile et docs
-- [ ] Tests après renommage
-
-**Priorité** : Should Have  
-**Effort** : 3 points  
-**Sprint** : Sprint 1  
-**Statut** : 📋 To Do
+**Total Epic 4** : 42 points
 
 ---
 
-#### US-204 : Ajouter couleurs ANSI aux scripts
-**En tant que** développeur  
-**Je veux** des logs colorés dans les scripts bash  
-**Afin de** identifier rapidement les erreurs/succès
+## 📈 [Epic 5 : Observabilité & Monitoring](backlog/Épopées/EPOP-005-observabilite-monitoring.md)
 
-**Acceptance Criteria** :
-- [ ] Macros printf dans Makefile (ADR-605)
-- [ ] Fonctions bash `log_info`, `log_success`, `log_error`
-- [ ] Couleurs appliquées à tous les scripts
-- [ ] Compatible macOS et Linux
+**Objectif** : Visibilité opérationnelle complète (métriques, logs, traces)  
+**Valeur Métier** : Détection proactive incidents et optimisation performance  
+**Points** : 31 | **Statut** : 🟡 Planifié
 
-**Priorité** : Should Have  
-**Effort** : 3 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
+### Récits Utilisateurs
 
----
+| ID | Titre | Priorité | Effort | Sprint | Statut |
+|----|-------|----------|--------|--------|--------|
+| [RECIT-501](backlog/Récits/RECIT-501-application-insights.md) | Intégrer Application Insights | Must Have | 8 pts | S3 | 📋 To Do |
+| [RECIT-502](backlog/Récits/RECIT-502-health-checks.md) | Endpoints /health et /ready | Must Have | 5 pts | S2 | 📋 To Do |
+| [RECIT-503](backlog/Récits/RECIT-503-grafana-dashboard.md) | Dashboard Grafana (optionnel) | Could Have | 13 pts | S4 | 📋 To Do |
+| [RECIT-504](backlog/Récits/RECIT-504-logs-json.md) | Logs structurés JSON | Should Have | 5 pts | S3 | 📋 To Do |
 
-#### US-205 : Implémenter parsing d'options Bash standard
-**En tant que** développeur  
-**Je veux** que tous les scripts supportent `-h/--help`, `-v/--verbose`  
-**Afin de** avoir une interface utilisateur cohérente
-
-**Acceptance Criteria** :
-- [ ] Pattern while/case/shift dans tous les scripts (ADR-607)
-- [ ] Options standard : `-h`, `-v`, `-n` (dry-run), `-o` (output)
-- [ ] Fonction `_usage()` obligatoire
-- [ ] Tests des options pour chaque script
-
-**Priorité** : Should Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
+**Total Epic 5** : 31 points
 
 ---
 
-## 🔐 Epic 3 : Security Hardening
-
-**Objectif** : Sécuriser le gateway selon docs/reference/security.md  
-**Personas** : Riley (Security), Jordan (DevOps)  
-**Valeur Métier** : Réduction des risques d'exposition/breach  
-**Statut** : 📋 To Do
-
-### User Stories
-
-#### US-301 : Intégrer Azure Key Vault pour secrets
-**En tant que** DevOps engineer  
-**Je veux** stocker les secrets dans Azure Key Vault  
-**Afin de** ne jamais commiter de credentials dans le code
-
-**Acceptance Criteria** :
-- [ ] Provisionner Key Vault via script ou IaC
-- [ ] Stocker `AZURE_RELAY_CONNECTION_STRING` dans Key Vault
-- [ ] Agent relay récupère secrets via Managed Identity
-- [ ] Documentation rotation des secrets
-
-**Priorité** : Must Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
-
----
-
-#### US-302 : Implémenter log redaction
-**En tant que** security engineer  
-**Je veux** que les prompts et API keys soient masqués dans les logs  
-**Afin de** éviter les fuites de données sensibles
-
-**Acceptance Criteria** :
-- [ ] Fonction Python `redact_sensitive_data()` dans relay_agent.py
-- [ ] Patterns regex pour API keys, connection strings
-- [ ] Logs structurés (JSON) avec champ `redacted: true`
-- [ ] Tests unitaires de redaction
-
-**Priorité** : Must Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
-
----
-
-#### US-303 : Ajouter rate limiting au proxy Azure
-**En tant que** DevOps engineer  
-**Je veux** limiter les requêtes par IP/utilisateur  
-**Afin de** éviter les abus et contrôler les coûts
-
-**Acceptance Criteria** :
-- [ ] Configuration rate limit (ex: 100 req/min/IP)
-- [ ] Réponse HTTP 429 avec Retry-After header
-- [ ] Métriques de throttling dans Application Insights
-- [ ] Documentation des limites dans README
-
-**Priorité** : Must Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
-
----
-
-#### US-304 : Créer threat model diagram
-**En tant que** security engineer  
-**Je veux** un diagramme d'architecture avec attack surface  
-**Afin de** identifier les vecteurs d'attaque potentiels
-
-**Acceptance Criteria** :
-- [ ] Diagramme threat model (Mermaid ou draw.io)
-- [ ] Trust boundaries identifiées
-- [ ] STRIDE analysis pour chaque composant
-- [ ] Mitigations documentées dans `docs/reference/security.md`
-
-**Priorité** : Should Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-## ☁️ Epic 4 : Infrastructure as Code (IaC)
-
-**Objectif** : Automatiser le déploiement Azure avec Bicep/Terraform  
-**Personas** : Jordan (DevOps)  
-**Valeur Métier** : Déploiement reproductible en <30min  
-**Statut** : 📋 To Do
-
-### User Stories
-
-#### US-401 : Créer template Bicep pour Azure Relay
-**En tant que** DevOps engineer  
-**Je veux** un template Bicep pour provisionner Relay namespace + Hybrid Connection  
-**Afin de** automatiser le déploiement Azure
-
-**Acceptance Criteria** :
-- [ ] Fichier `infra/bicep/relay.bicep`
-- [ ] Paramètres : location, sku, connection name
-- [ ] Output : connection string (secured)
-- [ ] Tests de déploiement sur subscription test
-
-**Priorité** : Must Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-#### US-402 : Créer template Bicep pour HTTPS proxy
-**En tant que** DevOps engineer  
-**Je veux** un template Bicep pour App Service ou Container App proxy  
-**Afin de** déployer le point d'entrée HTTPS public
-
-**Acceptance Criteria** :
-- [ ] Fichier `infra/bicep/proxy.bicep`
-- [ ] Support App Service ou Container Apps (paramétrable)
-- [ ] Managed Identity configurée
-- [ ] Custom domain + SSL certificate
-
-**Priorité** : Must Have  
-**Effort** : 13 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-#### US-403 : Ajouter GitHub Actions workflow CI/CD
-**En tant que** DevOps engineer  
-**Je veux** un pipeline GitHub Actions pour déployer automatiquement  
-**Afin de** avoir une CI/CD complète
-
-**Acceptance Criteria** :
-- [ ] Workflow `.github/workflows/deploy-azure.yml`
-- [ ] Trigger sur push main ou tag release
-- [ ] Déploie Bicep templates avec Azure CLI
-- [ ] Secrets stockés dans GitHub Secrets
-
-**Priorité** : Should Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-#### US-404 : Alternative Terraform pour IaC
-**En tant que** DevOps engineer préférant Terraform  
-**Je veux** des modules Terraform équivalents aux Bicep  
-**Afin de** utiliser mon outil préféré
-
-**Acceptance Criteria** :
-- [ ] Modules Terraform dans `infra/terraform/`
-- [ ] Parité fonctionnelle avec Bicep
-- [ ] Backend remote state (Azure Storage)
-- [ ] Documentation choix Bicep vs Terraform
-
-**Priorité** : Could Have  
-**Effort** : 13 points  
-**Sprint** : Sprint 4  
-**Statut** : 📋 To Do
-
----
-
-## 📊 Epic 5 : Observabilité et Monitoring
-
-**Objectif** : Monitorer la santé et les performances du gateway  
-**Personas** : Jordan (DevOps), Alex (Développeur)  
-**Valeur Métier** : Réduction MTTR (Mean Time To Recovery)  
-**Statut** : 📋 To Do
-
-### User Stories
-
-#### US-501 : Intégrer Application Insights
-**En tant que** DevOps engineer  
-**Je veux** envoyer les métriques vers Application Insights  
-**Afin de** monitorer la santé en temps réel
-
-**Acceptance Criteria** :
-- [ ] SDK Application Insights dans relay_agent.py
-- [ ] Métriques : latence, throughput, erreurs
-- [ ] Custom events : relay connection, model inference
-- [ ] Dashboard Application Insights pré-configuré
-
-**Priorité** : Must Have  
-**Effort** : 8 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-#### US-502 : Ajouter health checks endpoints
-**En tant que** développeur  
-**Je veux** des endpoints `/health` et `/ready`  
-**Afin de** vérifier la connectivité rapidement
-
-**Acceptance Criteria** :
-- [ ] Endpoint `/health` sur LiteLLM, agent, proxy
-- [ ] Checks : Ollama/macMLX accessible, Relay connected
-- [ ] Réponse JSON structurée avec status par composant
-- [ ] Script `scripts/check-health.sh` pour tester
-
-**Priorité** : Must Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 2  
-**Statut** : 📋 To Do
-
----
-
-#### US-503 : Créer dashboard Grafana (optionnel)
-**En tant que** DevOps engineer  
-**Je veux** visualiser les métriques dans Grafana  
-**Afin de** avoir une vue consolidée
-
-**Acceptance Criteria** :
-- [ ] Stack Prometheus + Grafana (Docker Compose optionnel)
-- [ ] Exporters pour LiteLLM et Ollama/macMLX
-- [ ] Dashboard pré-configuré (latence, tokens/s, erreurs)
-- [ ] Documentation setup Grafana
-
-**Priorité** : Could Have  
-**Effort** : 13 points  
-**Sprint** : Sprint 4  
-**Statut** : 📋 To Do
-
----
-
-#### US-504 : Logs structurés JSON partout
-**En tant que** DevOps engineer  
-**Je veux** tous les logs en format JSON  
-**Afin de** faciliter le parsing et l'analyse
-
-**Acceptance Criteria** :
-- [ ] Logging Python structuré (structlog ou python-json-logger)
-- [ ] Champs standard : timestamp, level, component, request_id
-- [ ] Redaction appliquée (US-302)
-- [ ] Tests de format JSON
-
-**Priorité** : Should Have  
-**Effort** : 5 points  
-**Sprint** : Sprint 3  
-**Statut** : 📋 To Do
-
----
-
-## 📈 Backlog Priorization Matrix
+## 📈 Résumé Priorisation
 
 | Epic | Must Have | Should Have | Could Have | Total Points | Sprint Target |
 |------|-----------|-------------|------------|--------------|---------------|
-| **Epic 1 (macMLX)** | 2 stories (5 pts) | 1 story (2 pts) | 1 story (5 pts) | 12 pts | Sprint 1 |
-| **Epic 2 (DevOps)** | 2 stories (16 pts) | 3 stories (11 pts) | 0 | 27 pts | Sprint 1-2 |
-| **Epic 3 (Security)** | 3 stories (18 pts) | 1 story (5 pts) | 0 | 23 pts | Sprint 2 |
-| **Epic 4 (IaC)** | 2 stories (21 pts) | 1 story (8 pts) | 1 story (13 pts) | 42 pts | Sprint 3-4 |
-| **Epic 5 (Monitoring)** | 2 stories (13 pts) | 1 story (5 pts) | 1 story (13 pts) | 31 pts | Sprint 3-4 |
+| **Epic 1 (macMLX)** | 2 récits (5 pts) | 1 récit (2 pts) | 1 récit (5 pts) | 23 pts | Sprint 1 |
+| **Epic 2 (DevOps)** | 2 récits (16 pts) | 3 récits (11 pts) | 0 | 27 pts | Sprint 1-2 |
+| **Epic 3 (Sécurité)** | 3 récits (18 pts) | 1 récit (5 pts) | 0 | 23 pts | Sprint 2 |
+| **Epic 4 (IaC)** | 2 récits (21 pts) | 1 récit (8 pts) | 1 récit (13 pts) | 42 pts | Sprint 3-4 |
+| **Epic 5 (Monitoring)** | 2 récits (13 pts) | 1 récit (5 pts) | 1 récit (13 pts) | 31 pts | Sprint 3-4 |
 
 **Vélocité estimée** : 20-25 points/sprint (ajustable après Sprint 1)
 
@@ -468,6 +162,15 @@ Ces fonctionnalités sont explicitement **exclues** du backlog actuel :
 - ❌ Remplacement de GitHub Copilot inline completions
 - ❌ Support Windows pour l'agent local (macOS/Linux uniquement)
 - ❌ Interface web de gestion (CLI only)
+
+---
+
+## 📝 Maintenance du Backlog
+
+- **Review Hebdomadaire** : Ajustement des priorités après chaque sprint
+- **Grooming Bi-Hebdomadaire** : Estimation des nouveaux récits
+- **Liens** : Tous les récits référencent leur épopée parente
+- **Statuts** : Mis à jour en temps réel (✅ Complété | 🚧 En Cours | 📋 To Do)
 
 ---
 
