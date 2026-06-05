@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 # Colors (ADR-605)
+# Note: Colors defined here for Makefile targets. Scripts use scripts/common.sh (ADR-603)
 RED    := \033[0;31m
 GREEN  := \033[0;32m
 YELLOW := \033[0;33m

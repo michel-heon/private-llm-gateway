@@ -1,13 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Colors (ADR-605)
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m' # No Color
+# Source common functions (ADR-603: DRY principle)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/common.sh
+source "${SCRIPT_DIR}/common.sh"
 
 # Default values
 DEFAULT_MODEL="mlx-community/Qwen2.5-7B-Instruct-4bit"
@@ -89,80 +86,57 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# Verbose logging helper
-_log_verbose() {
-    if [[ "${VERBOSE}" == "true" ]]; then
-        printf "${CYAN}[VERBOSE]${NC} %s\n" "$1"
-    fi
-}
-
 # Display resolved configuration
-printf "${CYAN}➤ macMLX Configuration${NC}\n"
-printf "  Model:  ${BOLD}%s${NC}\n" "${MODEL}"
-printf "  Port:   ${BOLD}%s${NC}\n" "${PORT}"
-printf "  Server: ${BOLD}http://127.0.0.1:%s${NC}\n\n" "${PORT}"
+print_config_header "macMLX Configuration"
+log_config "Model" "${MODEL}"
+log_config "Port" "${PORT}"
+log_config "Server" "http://127.0.0.1:${PORT}"
+printf "\n"
 
-# Dry-run mode: exit after showing config
-if [[ "${DRY_RUN}" == "true" ]]; then
-    printf "${YELLOW}⚠ Dry-run mode — configuration shown, not starting server${NC}\n"
-    exit 0
-fi
+# Dry-run mode: exit after showing config (ADR-603: DRY)
+handle_dry_run
 
-# Check 1: Verify we're on Apple Silicon
-_log_verbose "Checking system architecture..."
-ARCH=$(uname -m)
-if [[ "${ARCH}" != "arm64" ]]; then
-    printf "${RED}✘ macMLX requires Apple Silicon (arm64), detected: %s${NC}\n" "${ARCH}" >&2
+# Pre-flight checks (ADR-603: use common validation functions)
+log_verbose "Checking system architecture..."
+if ! is_apple_silicon; then
+    ARCH=$(uname -m)
+    log_error "macMLX requires Apple Silicon (arm64), detected: ${ARCH}"
     printf "  ${YELLOW}→ Use Ollama instead on this platform${NC}\n" >&2
     exit 1
 fi
-_log_verbose "✓ Running on Apple Silicon (${ARCH})"
+log_verbose "✓ Running on Apple Silicon ($(uname -m))"
 
-# Check 2: Verify Python is available
-_log_verbose "Checking Python availability..."
-if ! command -v python3 &>/dev/null; then
-    printf "${RED}✘ Python 3 is not installed or not in PATH${NC}\n" >&2
-    printf "  ${YELLOW}→ Install Python: brew install python3${NC}\n" >&2
-    exit 1
-fi
-PYTHON_VERSION=$(python3 --version 2>&1 | cut -d' ' -f2)
-_log_verbose "✓ Python found: ${PYTHON_VERSION}"
+# Check Python availability
+log_verbose "Checking Python availability..."
+require_command "python3" "Install Python: brew install python3"
+PYTHON_VERSION=$(get_command_version "python3" "--version")
+log_verbose "✓ Python found: ${PYTHON_VERSION}"
 
-# Check 3: Verify mlx-lm is installed
-_log_verbose "Checking mlx-lm installation..."
-if ! python3 -c "import mlx_lm" 2>/dev/null; then
-    printf "${RED}✘ mlx-lm package is not installed${NC}\n" >&2
-    printf "  ${YELLOW}→ Install it: pip install mlx-lm${NC}\n" >&2
-    printf "  ${YELLOW}→ Or activate your virtual environment:${NC}\n" >&2
-    printf "     source venv/bin/activate\n" >&2
-    exit 1
-fi
+# Check mlx-lm installation
+log_verbose "Checking mlx-lm installation..."
+require_python_package "mlx_lm" "Install it: pip install mlx-lm"
 MLX_VERSION=$(python3 -c "import mlx_lm; print(mlx_lm.__version__)" 2>/dev/null || echo "unknown")
-_log_verbose "✓ mlx-lm found: ${MLX_VERSION}"
+log_verbose "✓ mlx-lm found: ${MLX_VERSION}"
 
-# Check 4: Verify port is available
-_log_verbose "Checking if port ${PORT} is available..."
-if lsof -Pi ":${PORT}" -sTCP:LISTEN -t &>/dev/null; then
-    printf "${RED}✘ Port %s is already in use${NC}\n" "${PORT}" >&2
-    printf "  ${YELLOW}→ Running processes:${NC}\n" >&2
-    lsof -Pi ":${PORT}" -sTCP:LISTEN | head -2 >&2
-    printf "  ${YELLOW}→ Choose a different port with --port${NC}\n" >&2
-    exit 1
-fi
-_log_verbose "✓ Port ${PORT} is available"
+# Check port availability
+log_verbose "Checking if port ${PORT} is available..."
+require_port_available "${PORT}"
+log_verbose "✓ Port ${PORT} is available"
 
 # All checks passed
-printf "${GREEN}✓ Pre-flight checks passed${NC}\n\n"
+log_success "Pre-flight checks passed"
+printf "\n"
 
 # Start macMLX server
-printf "${CYAN}➤ Starting macMLX server...${NC}\n"
+log_info "Starting macMLX server..."
 printf "  ${YELLOW}Press Ctrl+C to stop${NC}\n\n"
 
 # Build command
 CMD=(python3 -m mlx_lm.server --model "${MODEL}" --port "${PORT}")
 
 if [[ "${VERBOSE}" == "true" ]]; then
-    printf "${CYAN}[VERBOSE]${NC} Command: %s\n\n" "${CMD[*]}"
+    log_verbose "Command: ${CMD[*]}"
+    printf "\n"
 fi
 
 # Execute mlx_lm.server

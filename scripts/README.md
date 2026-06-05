@@ -25,6 +25,94 @@ This directory contains automation scripts for the private-llm-gateway project.
 | `check-local-endpoint.sh` | Verify local endpoint availability | Cross-platform | ✅ Active |
 | `check-public-endpoint.sh` | Verify public endpoint via Azure Relay | Cross-platform | ✅ Active |
 
+### Shared Library (ADR-603: DRY Principle)
+
+| Script | Description | Platform | Status |
+|--------|-------------|----------|--------|
+| `common.sh` | Shared functions library (logging, validation, system checks) | Cross-platform | ✅ Active |
+
+---
+
+## 📚 common.sh — Shared Library (ADR-603)
+
+The `common.sh` file implements the **DRY (Don't Repeat Yourself) principle** by centralizing reusable functions across all bash scripts.
+
+### Sourcing in Your Scripts
+
+```bash
+#!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=scripts/common.sh
+source "${SCRIPT_DIR}/common.sh"
+```
+
+### Logging Functions (ADR-605)
+
+```bash
+log_info "Starting service..."        # ➤ Info with cyan arrow
+log_success "Service started"         # ✓ Success with green checkmark
+log_warning "Port already in use"     # ⚠ Warning with yellow sign
+log_error "Failed to connect"         # ✘ Error with red X
+log_verbose "Checking config..."      # [VERBOSE] if VERBOSE=true
+log_config "Model" "Qwen2.5-7B"       # Formatted key-value pair
+print_config_header "Configuration"   # Section header
+```
+
+### System Validation Functions
+
+```bash
+is_apple_silicon                     # Returns 0 if arm64 architecture
+is_port_available "8080"             # Returns 0 if port is free
+command_exists "python3"             # Returns 0 if command exists
+python_package_exists "mlx_lm"       # Returns 0 if Python package installed
+```
+
+### Health Check Functions
+
+```bash
+check_service_health "http://localhost:8080/health" [timeout]  # Returns 0 if service responds
+is_process_running "mlx_lm.server"                             # Returns 0 if process active
+get_process_pid "mlx_lm.server"                                # Returns PID or empty
+```
+
+### Error Handling Functions
+
+```bash
+die "Configuration file not found"                         # Log error and exit 1
+require_command "python3" "Install: brew install python3"  # Require command or exit
+require_port_available "8080"                              # Require port free or exit
+require_python_package "mlx_lm" "pip install mlx-lm"      # Require Python package or exit
+```
+
+### Utilities
+
+```bash
+handle_dry_run                              # Exit with warning if DRY_RUN=true
+get_command_version "python3" "--version"   # Returns version or "unknown"
+```
+
+### Exported Variables (ADR-605)
+
+The following ANSI color codes are available after sourcing:
+- `RED`, `GREEN`, `YELLOW`, `BLUE`, `CYAN`, `BOLD`, `NC` (No Color)
+
+### Usage Example
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/common.sh"
+
+# Use shared functions
+log_info "Initializing..."
+require_command "curl" "Install: brew install curl"
+require_port_available "8080"
+
+log_success "Ready!"
+```
+
 ---
 
 ## 🚀 Quick Reference
