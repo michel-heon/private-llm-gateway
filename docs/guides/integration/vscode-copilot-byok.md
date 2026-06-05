@@ -44,8 +44,75 @@ curl http://127.0.0.1:8080/v1/models
 
 ### Step 2: Configure VS Code Settings
 
-Open VS Code Settings (JSON) and add:
+#### Option A: Via Settings UI (Recommended for beginners)
 
+1. **Open VS Code Settings**
+   - **macOS:** `Cmd + ,` (virgule) ou `Code → Settings... → Settings`
+   - **Windows/Linux:** `Ctrl + ,` ou `File → Preferences → Settings`
+
+2. **Search for Copilot settings**
+   - Dans la barre de recherche en haut, tapez: `copilot advanced`
+   - Vous verrez apparaître des options Copilot
+
+3. **⚠️ Note importante**  
+   La configuration custom endpoint n'est **pas toujours disponible dans l'UI**. Si vous ne voyez pas l'option "GitHub > Copilot: Advanced", passez à l'**Option B (JSON)** ci-dessous.
+
+#### Option B: Via Settings JSON (Méthode universelle)
+
+1. **Ouvrir le fichier settings.json**
+   
+   **Méthode 1 - Raccourci clavier:**
+   - **macOS:** `Cmd + Shift + P` → Tapez "Preferences: Open User Settings (JSON)"
+   - **Windows/Linux:** `Ctrl + Shift + P` → Tapez "Preferences: Open User Settings (JSON)"
+   - Appuyez sur `Entrée`
+
+   **Méthode 2 - Via l'interface:**
+   - Ouvrez les Settings (`Cmd + ,` ou `Ctrl + ,`)
+   - Cliquez sur l'icône 📄 **"Open Settings (JSON)"** en haut à droite de l'onglet Settings
+   - (L'icône ressemble à un document avec une flèche)
+
+2. **Ajouter la configuration**
+
+   Le fichier `settings.json` s'ouvre. Vous verrez du contenu existant comme:
+   ```json
+   {
+     "editor.fontSize": 14,
+     "workbench.colorTheme": "Dark+",
+     ...
+   }
+   ```
+
+   **Ajoutez la configuration Copilot** AVANT la dernière accolade fermante `}`:
+
+   ```json
+   {
+     "editor.fontSize": 14,
+     "workbench.colorTheme": "Dark+",
+     
+     "github.copilot.advanced": {
+       "endpoint": "http://127.0.0.1:8080/v1",
+       "model": "mlx-community/Qwen2.5-7B-Instruct-4bit"
+     }
+   }
+   ```
+
+   ⚠️ **Important:**
+   - Ajoutez une **virgule** après la ligne précédente si nécessaire
+   - Respectez l'indentation (2 espaces)
+   - VS Code affiche des erreurs de syntaxe en rouge si mal formaté
+
+3. **Sauvegarder**
+   - **macOS:** `Cmd + S`
+   - **Windows/Linux:** `Ctrl + S`
+   - Le fichier se sauvegarde automatiquement après quelques secondes
+
+4. **Vérifier la configuration**
+   - Aucune erreur rouge ne doit apparaître dans le fichier
+   - Si erreur: vérifiez les virgules, accolades, guillemets
+
+#### Exemples de configuration complète
+
+**Configuration minimale (macMLX direct):**
 ```json
 {
   "github.copilot.advanced": {
@@ -55,8 +122,17 @@ Open VS Code Settings (JSON) and add:
 }
 ```
 
-**Alternative: Using LiteLLM Proxy (if running)**
+**Configuration avec model coding spécialisé:**
+```json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://127.0.0.1:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  }
+}
+```
 
+**Alternative: Using LiteLLM Proxy (si vous utilisez le proxy):**
 ```json
 {
   "github.copilot.advanced": {
@@ -65,6 +141,13 @@ Open VS Code Settings (JSON) and add:
   }
 }
 ```
+
+#### Où se trouve le fichier settings.json?
+
+Si vous voulez l'éditer directement dans un éditeur de texte:
+- **macOS:** `~/Library/Application Support/Code/User/settings.json`
+- **Linux:** `~/.config/Code/User/settings.json`
+- **Windows:** `%APPDATA%\Code\User\settings.json`
 
 ### Step 3: Test the Configuration
 
