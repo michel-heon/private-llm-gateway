@@ -23,6 +23,21 @@ Priorisation selon méthode **MoSCoW** (Must, Should, Could, Won't).
 
 ---
 
+## ⚠️ Principes Directeurs
+
+> **🎯 Respect des ADR (Architecture Decision Records)**
+> 
+> Tous les récits et tâches de ce backlog doivent **respecter les décisions architecturales** documentées dans [`docs/adr/`](../adr/).
+> 
+> - **Avant implémentation** : Vérifier les ADR applicables au domaine (DevOps, Sécurité, IaC, etc.)
+> - **Cohérence** : Les spécifications techniques des récits sont alignées sur les ADR
+> - **Traçabilité** : Chaque récit référence les ADR pertinents dans sa section "🔗 Dépendances"
+> - **Évolution** : Si un récit nécessite une nouvelle décision, créer un nouvel ADR
+> 
+> **Exemple** : Le [RECIT-203](backlog/Récits/RECIT-203-nomenclature-scripts.md) implémente l'[ADR-601](../adr/601-DEVOPS-nomenclature-scripts.md) (nomenclature scripts).
+
+---
+
 ## 📁 Structure du Backlog
 
 ```

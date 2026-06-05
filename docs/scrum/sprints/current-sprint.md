@@ -29,6 +29,30 @@
 
 ---
 
+## ✅ Definition of Done & Principes
+
+### Definition of Done (DoD)
+
+Une User Story est considérée "Done" quand :
+- [ ] Code implémenté et testé
+- [ ] Tests unitaires/intégration passent
+- [ ] Documentation mise à jour
+- [ ] **ADR respectés** (vérifier [`docs/adr/`](../../adr/) pour le domaine)
+- [ ] Code reviewé et approuvé
+- [ ] Commit avec message conventionnel (`feat:`, `fix:`, etc.)
+- [ ] Déployable sur environnement de test
+
+### Principes du Sprint
+
+> **⚠️ Respect des ADR (Architecture Decision Records)**
+> 
+> Toute implémentation doit **respecter les décisions architecturales** :
+> - Consulter les ADR pertinents **avant** de coder
+> - Exemples : [ADR-601](../../adr/601-DEVOPS-nomenclature-scripts.md) (nomenclature scripts), [ADR-600](../../adr/600-DEVOPS-bootstrap-configuration-management.md) (configuration)
+> - En cas de doute ou besoin de nouvelle décision : créer un ADR
+
+---
+
 ## 📋 Sprint Backlog
 
 ### ✅ Complétées
