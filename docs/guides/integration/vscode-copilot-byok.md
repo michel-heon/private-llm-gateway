@@ -163,6 +163,262 @@ Si vous voulez l'éditer directement dans un éditeur de texte:
 
 ---
 
+## Scenario 1B: Windows VS Code → Mac via SSH
+
+**Configuration pour VS Code sur Windows 11 (Parallels Desktop) connecté au Mac par SSH.**
+
+### Architecture
+
+```
+Windows 11 (VS Code)  →  SSH Tunnel  →  Mac (macMLX server on port 8080)
+   Parallels Desktop       port forward     elie-mac (192.168.7.116)
+```
+
+### Option 1: SSH Port Forwarding (Recommandé)
+
+#### Étape 1: Créer le tunnel SSH
+
+Dans un terminal Windows (PowerShell ou CMD):
+
+```powershell
+# Créer un tunnel SSH qui forward le port 8080 du Mac vers Windows
+ssh -L 8080:localhost:8080 michelheon@192.168.7.116
+
+# Ou avec une clé SSH spécifique
+ssh -i ~/.ssh/id_rsa -L 8080:localhost:8080 michelheon@192.168.7.116
+```
+
+**Maintenir le tunnel actif:**
+- Laissez cette fenêtre de terminal ouverte
+- Le tunnel reste actif tant que la connexion SSH est active
+- Si vous fermez le terminal, le tunnel s'arrête
+
+**Alternative: Tunnel permanent en background (Windows)**
+```powershell
+# Créer un tunnel SSH en background
+Start-Process ssh -ArgumentList "-f", "-N", "-L", "8080:localhost:8080", "michelheon@192.168.7.116"
+
+# Pour arrêter: trouver le processus SSH et le tuer
+Get-Process ssh | Stop-Process
+```
+
+#### Étape 2: Configurer VS Code (Windows)
+
+Dans VS Code sur Windows, ouvrez `settings.json` (`Ctrl + Shift + P` → "Preferences: Open User Settings (JSON)"):
+
+**Configuration multi-modèles (tous les modèles disponibles):**
+
+```json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://localhost:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  },
+  
+  "// Commentaire: Modèles disponibles - changez le 'model' ci-dessus selon vos besoins": "",
+  "// Coding spécialisés (recommandés)": "",
+  "//   - mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit (4GB RAM, rapide, excellent pour code)": "",
+  "//   - mlx-community/Qwen2.5-Coder-7B-Instruct-4bit (4GB RAM, reviews et best practices)": "",
+  "//   - mlx-community/Qwen2.5-Coder-14B-Instruct-4bit (8GB RAM, architecture complexe)": "",
+  "//   - mlx-community/Codestral-22B-v0.1-4bit (14GB RAM, production, M2 Max+)": "",
+  "// Modèles généraux": "",
+  "//   - mlx-community/Qwen2.5-7B-Instruct-4bit (défaut, polyvalent)": "",
+  "//   - mlx-community/Mistral-7B-Instruct-v0.3-4bit (conversationnel)": ""
+}
+```
+
+**Note:** JSON ne supporte pas les commentaires `//`. Pour une configuration propre, gardez uniquement:
+
+```json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://localhost:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  }
+}
+```
+
+#### Étape 3: Vérifier la connexion
+
+Dans le terminal Windows (avec tunnel SSH actif):
+
+```powershell
+# Tester la connexion au serveur macMLX via le tunnel
+curl http://localhost:8080/health
+
+# Lister les modèles disponibles
+curl http://localhost:8080/v1/models
+```
+
+### Option 2: Connexion Directe via IP
+
+**Avantage:** Pas besoin de maintenir un tunnel SSH  
+**Inconvénient:** Nécessite que le serveur macMLX écoute sur toutes les interfaces (0.0.0.0)
+
+#### Étape 1: Démarrer macMLX en mode réseau (sur le Mac)
+
+```bash
+# Sur le Mac, démarrer macMLX pour accepter les connexions réseau
+# NOTE: Actuellement mlx_lm.server écoute seulement sur 127.0.0.1
+# Cette option nécessite une modification du serveur (voir ci-dessous)
+```
+
+**⚠️ Limitation actuelle:**  
+`mlx_lm.server` écoute uniquement sur `127.0.0.1` (localhost). Pour accepter les connexions réseau, il faudrait:
+1. Modifier le code du serveur, ou
+2. Utiliser un reverse proxy (nginx, caddy), ou
+3. **Recommandé: Utiliser SSH Port Forwarding (Option 1)**
+
+#### Étape 2: Configuration VS Code (si réseau disponible)
+
+```json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://192.168.7.116:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  }
+}
+```
+
+### Tableau des Modèles Disponibles
+
+| Modèle | Identifiant complet | RAM | Spécialité | Commande de téléchargement |
+|--------|---------------------|-----|------------|----------------------------|
+| **DeepSeek-Coder** | `mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit` | 4GB | Code, debug, refactoring ⭐⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit` |
+| **Qwen2.5-Coder-7B** | `mlx-community/Qwen2.5-Coder-7B-Instruct-4bit` | 4GB | Reviews, best practices ⭐⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/Qwen2.5-Coder-7B-Instruct-4bit` |
+| **Qwen2.5-Coder-14B** | `mlx-community/Qwen2.5-Coder-14B-Instruct-4bit` | 8GB | Architecture complexe ⭐⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/Qwen2.5-Coder-14B-Instruct-4bit` |
+| **Codestral-22B** | `mlx-community/Codestral-22B-v0.1-4bit` | 14GB | Code production (M2 Max+) ⭐⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit` |
+| **Qwen2.5-7B** (défaut) | `mlx-community/Qwen2.5-7B-Instruct-4bit` | 4GB | Polyvalent ⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/Qwen2.5-7B-Instruct-4bit` |
+| **Mistral-7B** | `mlx-community/Mistral-7B-Instruct-v0.3-4bit` | 4GB | Conversationnel ⭐⭐⭐⭐ | `make macmlx-download MODEL=mlx-community/Mistral-7B-Instruct-v0.3-4bit` |
+
+### Changer de Modèle
+
+#### Sur le Mac (serveur)
+
+```bash
+# Arrêter le serveur actuel
+make macmlx-stop
+
+# Vérifier quels modèles sont téléchargés
+make macmlx-download-status
+
+# Démarrer avec un modèle différent
+./scripts/macmlx-start.sh --model mlx-community/Codestral-22B-v0.1-4bit
+
+# Ou via Makefile (utilise le modèle par défaut)
+make macmlx-start
+```
+
+#### Sur Windows (VS Code)
+
+1. Ouvrir `settings.json` (`Ctrl + Shift + P` → "Preferences: Open User Settings (JSON)")
+2. Changer le champ `"model"` dans `github.copilot.advanced`
+3. Sauvegarder (`Ctrl + S`)
+4. Redémarrer VS Code ou recharger la fenêtre (`Ctrl + Shift + P` → "Developer: Reload Window")
+
+### Configuration Complète - Tous les Modèles
+
+Créez un fichier `vscode-copilot-models.json` sur Windows pour documenter toutes les configurations:
+
+```json
+{
+  "configurations": {
+    "deepseek-coder": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit",
+      "use_case": "Génération code, debug, refactoring"
+    },
+    "qwen-coder-7b": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/Qwen2.5-Coder-7B-Instruct-4bit",
+      "use_case": "Code reviews, best practices"
+    },
+    "qwen-coder-14b": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/Qwen2.5-Coder-14B-Instruct-4bit",
+      "use_case": "Architecture complexe, systèmes distribués"
+    },
+    "codestral-22b": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/Codestral-22B-v0.1-4bit",
+      "use_case": "Code production, qualité maximale (nécessite M2 Max 64GB+)"
+    },
+    "qwen-general": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+      "use_case": "Usage général, polyvalent"
+    },
+    "mistral": {
+      "endpoint": "http://localhost:8080/v1",
+      "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+      "use_case": "Conversationnel, documentation"
+    }
+  }
+}
+```
+
+### Workflow Recommandé
+
+**Configuration quotidienne:**
+
+```powershell
+# 1. Dans Windows PowerShell: Démarrer le tunnel SSH
+ssh -L 8080:localhost:8080 michelheon@192.168.7.116
+
+# 2. Dans un autre terminal: Tester la connexion
+curl http://localhost:8080/health
+
+# 3. Lancer VS Code
+code .
+
+# 4. Utiliser Copilot normalement (Ctrl+Shift+I pour Chat)
+```
+
+**Changer de modèle:**
+1. Sur Mac: `make macmlx-stop` puis `./scripts/macmlx-start.sh --model <nouveau-modèle>`
+2. Sur Windows: Mettre à jour `settings.json` avec le nouveau modèle
+3. Recharger VS Code: `Ctrl + Shift + P` → "Developer: Reload Window"
+
+### Troubleshooting SSH
+
+**Tunnel SSH se ferme automatiquement:**
+```powershell
+# Option 1: Maintenir le tunnel avec keepalive
+ssh -o ServerAliveInterval=60 -L 8080:localhost:8080 michelheon@192.168.7.116
+
+# Option 2: Utiliser autossh (nécessite installation)
+# Télécharger: https://www.harding.motd.ca/autossh/
+autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -L 8080:localhost:8080 michelheon@192.168.7.116
+```
+
+**Port 8080 déjà utilisé sur Windows:**
+```powershell
+# Trouver le processus qui utilise le port
+netstat -ano | findstr :8080
+
+# Tuer le processus (remplacer <PID> par le numéro)
+taskkill /PID <PID> /F
+
+# Ou utiliser un autre port local (ex: 9080)
+ssh -L 9080:localhost:8080 michelheon@192.168.7.116
+
+# Puis dans VS Code settings.json:
+# "endpoint": "http://localhost:9080/v1"
+```
+
+**Connexion SSH requiert un mot de passe à chaque fois:**
+```powershell
+# Générer une paire de clés SSH (si pas déjà fait)
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Copier la clé publique sur le Mac
+type ~\.ssh\id_ed25519.pub | ssh michelheon@192.168.7.116 "cat >> ~/.ssh/authorized_keys"
+
+# Maintenant ssh -L 8080:localhost:8080 michelheon@192.168.7.116 ne demandera plus de mot de passe
+```
+
+---
+
 ## Scenario 2: Remote LiteLLM (Production)
 
 ### Endpoint Configuration
