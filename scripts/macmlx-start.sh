@@ -86,6 +86,18 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+# Auto-detect virtual environment
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+VENV_PYTHON="${PROJECT_ROOT}/venv/bin/python3"
+
+if [[ -x "${VENV_PYTHON}" ]]; then
+    PYTHON_CMD="${VENV_PYTHON}"
+    log_verbose "Using virtual environment Python: ${VENV_PYTHON}"
+else
+    PYTHON_CMD="python3"
+    log_verbose "Using system Python: python3"
+fi
+
 # Display resolved configuration
 print_config_header "macMLX Configuration"
 log_config "Model" "${MODEL}"
@@ -108,14 +120,14 @@ log_verbose "✓ Running on Apple Silicon ($(uname -m))"
 
 # Check Python availability
 log_verbose "Checking Python availability..."
-require_command "python3" "Install Python: brew install python3"
-PYTHON_VERSION=$(get_command_version "python3" "--version")
+require_command "${PYTHON_CMD}" "Install Python: brew install python3"
+PYTHON_VERSION=$(get_command_version "${PYTHON_CMD}" "--version")
 log_verbose "✓ Python found: ${PYTHON_VERSION}"
 
 # Check mlx-lm installation
 log_verbose "Checking mlx-lm installation..."
-require_python_package "mlx_lm" "Install it: pip install mlx-lm"
-MLX_VERSION=$(python3 -c "import mlx_lm; print(mlx_lm.__version__)" 2>/dev/null || echo "unknown")
+require_python_package "mlx_lm" "Install it: pip install mlx-lm" "${PYTHON_CMD}"
+MLX_VERSION=$(${PYTHON_CMD} -c "import mlx_lm; print(mlx_lm.__version__)" 2>/dev/null || echo "unknown")
 log_verbose "✓ mlx-lm found: ${MLX_VERSION}"
 
 # Check port availability
@@ -132,7 +144,7 @@ log_info "Starting macMLX server..."
 printf "  ${YELLOW}Press Ctrl+C to stop${NC}\n\n"
 
 # Build command
-CMD=(python3 -m mlx_lm.server --model "${MODEL}" --port "${PORT}")
+CMD=("${PYTHON_CMD}" -m mlx_lm.server --model "${MODEL}" --port "${PORT}")
 
 if [[ "${VERBOSE}" == "true" ]]; then
     log_verbose "Command: ${CMD[*]}"

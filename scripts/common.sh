@@ -88,11 +88,12 @@ command_exists() {
 }
 
 # Check if Python package is installed
-# Args: $1 = package name
+# Args: $1 = package name, $2 = python command (optional, default: python3)
 # Returns: 0 if installed, 1 otherwise
 python_package_exists() {
     local package="$1"
-    python3 -c "import ${package}" 2>/dev/null
+    local python_cmd="${2:-python3}"
+    "${python_cmd}" -c "import ${package}" 2>/dev/null
 }
 
 # ============================================================================
@@ -163,12 +164,13 @@ require_port_available() {
 }
 
 # Require Python package to be installed
-# Usage: require_python_package "mlx_lm" "pip install mlx-lm"
+# Usage: require_python_package "mlx_lm" "pip install mlx-lm" "python3"
 require_python_package() {
     local package="$1"
     local hint="${2:-}"
+    local python_cmd="${3:-python3}"
     
-    if ! python_package_exists "${package}"; then
+    if ! python_package_exists "${package}" "${python_cmd}"; then
         log_error "${package} package is not installed"
         [[ -n "${hint}" ]] && printf "  ${YELLOW}→ %s${NC}\n" "${hint}" >&2
         printf "  ${YELLOW}→ Or activate your virtual environment:${NC}\n" >&2

@@ -42,6 +42,9 @@ start-local: ## Start Ollama
 
 ##@ Local Services (macMLX - Apple Silicon)
 
+install: ## Install macMLX dependencies in virtual environment (Apple Silicon only)
+	@./scripts/install-mlx.sh
+
 macmlx-start: ## Start macMLX server (default: Qwen2.5-7B-Instruct-4bit on port 8080)
 	@printf "$(CYAN)➤ Starting macMLX server...$(NC)\n"
 	@./scripts/macmlx-start.sh

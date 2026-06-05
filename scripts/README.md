@@ -4,6 +4,12 @@ This directory contains automation scripts for the private-llm-gateway project.
 
 ## 📋 Script Inventory
 
+### Installation
+
+| Script | Description | Platform | Status |
+|--------|-------------|----------|--------|
+| `install-mlx.sh` | Install mlx-lm in virtual environment (venv approach) | macOS ARM64 only | ✅ Active |
+
 ### Model Serving
 
 | Script | Description | Platform | Status |
@@ -61,10 +67,10 @@ print_config_header "Configuration"   # Section header
 ### System Validation Functions
 
 ```bash
-is_apple_silicon                     # Returns 0 if arm64 architecture
-is_port_available "8080"             # Returns 0 if port is free
-command_exists "python3"             # Returns 0 if command exists
-python_package_exists "mlx_lm"       # Returns 0 if Python package installed
+is_apple_silicon                                  # Returns 0 if arm64 architecture
+is_port_available "8080"                          # Returns 0 if port is free
+command_exists "python3"                          # Returns 0 if command exists
+python_package_exists "mlx_lm" ["python_cmd"]    # Returns 0 if Python package installed (custom python optional)
 ```
 
 ### Health Check Functions
@@ -78,10 +84,10 @@ get_process_pid "mlx_lm.server"                                # Returns PID or 
 ### Error Handling Functions
 
 ```bash
-die "Configuration file not found"                         # Log error and exit 1
-require_command "python3" "Install: brew install python3"  # Require command or exit
-require_port_available "8080"                              # Require port free or exit
-require_python_package "mlx_lm" "pip install mlx-lm"      # Require Python package or exit
+die "Configuration file not found"                                        # Log error and exit 1
+require_command "python3" "Install: brew install python3"                 # Require command or exit
+require_port_available "8080"                                             # Require port free or exit
+require_python_package "mlx_lm" "pip install mlx-lm" ["python_cmd"]      # Require Python package or exit (custom python optional)
 ```
 
 ### Utilities
@@ -120,6 +126,9 @@ log_success "Ready!"
 ### macMLX (Apple Silicon)
 
 ```bash
+# Install mlx-lm (first time only)
+./scripts/install-mlx.sh
+
 # Start with defaults (Qwen2.5-7B-Instruct-4bit on port 8080)
 ./scripts/macmlx-start.sh
 
@@ -138,8 +147,11 @@ log_success "Ready!"
 
 **Requirements:**
 - Apple Silicon Mac (M1/M2/M3/M4)
-- Python 3 with `mlx-lm` package installed
-- Virtual environment activated (recommended)
+- Python 3 with `mlx-lm` package installed (see `install-mlx.sh`)
+
+**Notes:**
+- Virtual environment (`venv/`) is detected and used automatically if present
+- Falls back to system Python if no venv found
 
 ### Ollama
 
