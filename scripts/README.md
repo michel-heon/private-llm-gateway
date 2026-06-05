@@ -125,6 +125,31 @@ log_success "Ready!"
 
 ### macMLX (Apple Silicon)
 
+#### Via Makefile (Recommended)
+
+```bash
+# Install dependencies (first time only)
+make install
+
+# Download a specific model (pre-download for faster startup)
+make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit
+make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+
+# Start server with default model (Qwen2.5-7B-Instruct-4bit)
+make macmlx-start
+
+# Check server status and health
+make macmlx-status
+
+# Stop server
+make macmlx-stop
+
+# Show all available commands
+make help
+```
+
+#### Direct Script Usage
+
 ```bash
 # Install mlx-lm (first time only)
 ./scripts/install-mlx.sh

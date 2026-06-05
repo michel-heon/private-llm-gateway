@@ -15,7 +15,7 @@ DEFAULT_MACMLX_MODEL := mlx-community/Qwen2.5-7B-Instruct-4bit
 DEFAULT_MACMLX_PORT  := 8080
 
 .PHONY: help check start-local test-local test-public \
-        macmlx-start macmlx-stop macmlx-status
+        install macmlx-download macmlx-start macmlx-stop macmlx-status
 
 ##@ Help
 
@@ -44,6 +44,25 @@ start-local: ## Start Ollama
 
 install: ## Install macMLX dependencies in virtual environment (Apple Silicon only)
 	@./scripts/install-mlx.sh
+
+macmlx-download: ## Download a macMLX model (Usage: make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit)
+	@printf "$(CYAN)➤ Downloading macMLX model...$(NC)\n"
+	@if [ -z "$(MODEL)" ]; then \
+		printf "$(RED)✘ Error: MODEL variable is required$(NC)\n"; \
+		printf "  $(YELLOW)Example: make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit$(NC)\n"; \
+		printf "\n$(CYAN)Popular coding models:$(NC)\n"; \
+		printf "  • mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit   $(YELLOW)(Best for code)$(NC)\n"; \
+		printf "  • mlx-community/Qwen2.5-Coder-7B-Instruct-4bit          $(YELLOW)(Excellent)$(NC)\n"; \
+		printf "  • mlx-community/Codestral-22B-v0.1-4bit                 $(YELLOW)(Premium - 14GB RAM)$(NC)\n"; \
+		printf "  • mlx-community/Qwen2.5-7B-Instruct-4bit                $(YELLOW)(Default - General)$(NC)\n"; \
+		exit 1; \
+	fi
+	@printf "  Model: $(BOLD)$(MODEL)$(NC)\n"
+	@source venv/bin/activate && \
+		pip show huggingface_hub >/dev/null 2>&1 || pip install -q huggingface_hub[cli] && \
+		huggingface-cli download "$(MODEL)" --repo-type model && \
+		printf "\n$(GREEN)✓ Model downloaded successfully$(NC)\n" && \
+		printf "  $(CYAN)→ Start server: ./scripts/macmlx-start.sh --model $(MODEL)$(NC)\n"
 
 macmlx-start: ## Start macMLX server (default: Qwen2.5-7B-Instruct-4bit on port 8080)
 	@printf "$(CYAN)➤ Starting macMLX server...$(NC)\n"
