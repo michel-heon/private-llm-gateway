@@ -94,6 +94,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 | [600](./600-DEVOPS-bootstrap-configuration-management.md) | Gestion Multi-Format des Variables de Configuration | ✅ Accepté | 2026-06-05 | DevOps |
 | [601](./601-DEVOPS-nomenclature-scripts.md) | Nomenclature des Scripts et Règles Makefile | ✅ Accepté | 2026-06-05 | DevOps |
 | [602](./602-DEVOPS-makefile-orchestrateur.md) | Makefile comme Orchestrateur de Scripts | ✅ Accepté | 2026-06-05 | DevOps |
+| [603](./603-DEVOPS-reutilisation-code-principe-dry.md) | Réutilisation du Code et Principe DRY (Don't Repeat Yourself) | ✅ Accepté | 2026-06-05 | DevOps |
 | [605](./605-DEVOPS-gestion-couleurs-scripts-make.md) | Gestion des couleurs dans les scripts Make | ✅ Accepté | 2026-06-05 | DevOps |
 | [607](./607-DEVOPS-gestion-options-scripts-bash.md) | Gestion des Options dans les Scripts Bash | ✅ Accepté | 2026-06-05 | DevOps |
 
@@ -119,12 +120,12 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 
 | Indicateur | Valeur |
 |-----------|--------|
-| **Total ADRs** | 7 |
-| **Acceptés** | 7 |
+| **Total ADRs** | 8 |
+| **Acceptés** | 8 |
 | **Supersédés** | 0 |
 | **Proposés** | 0 |
 | **Brouillons** | 0 |
-| **Par Domaine** | META: 2, DEVOPS: 5 |
+| **Par Domaine** | META: 2, DEVOPS: 6 |
 
 ---
 
@@ -138,7 +139,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 | `SEC` | 300-399 | Sécurité, authentification, TLS | 300 |
 | `DATA` | 400-499 | Modèles, configuration, persistance | 400 |
 | `API` | 500-599 | Interfaces REST, OpenAI compatibility, LiteLLM | 500 |
-| `DEVOPS` | 600-699 | CI/CD, automation, scripts | 603, 604, 606, 608+ |
+| `DEVOPS` | 600-699 | CI/CD, automation, scripts | 604, 606, 608+ |
 | `TEST` | 700-799 | Tests, validation, monitoring | 700 |
 | `BIZ` | 800-899 | Licensing, distribution | 800 |
 

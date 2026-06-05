@@ -60,12 +60,132 @@ mlx_lm.generate --model mlx-community/Qwen2.5-7B-Instruct-4bit --prompt "Hello"
 
 ### Running macMLX Server
 
+#### Quick Start (Recommended)
+
+Use the provided automation script or Makefile:
+
+```bash
+# Using Makefile (recommended)
+make macmlx-start          # Start with defaults
+make macmlx-status         # Check if running
+make macmlx-stop           # Stop server
+
+# Using script directly
+./scripts/macmlx-start.sh  # Start with defaults
+
+# Custom model and port
+./scripts/macmlx-start.sh --model mlx-community/Mistral-7B-v0.3-4bit --port 9000
+
+# Verbose mode
+./scripts/macmlx-start.sh --verbose
+
+# Show config without starting (dry-run)
+./scripts/macmlx-start.sh --dry-run
+
+# Show help
+./scripts/macmlx-start.sh --help
+```
+
+**Script Features:**
+- ✅ Pre-flight checks (Apple Silicon, Python, mlx-lm installation, port availability)
+- ✅ Clear error messages with resolution hints
+- ✅ Standardized option parsing (`--help`, `--verbose`, `--dry-run`)
+- ✅ ANSI colored output for better readability
+
+See [`scripts/README.md`](../scripts/README.md) for complete script documentation.
+
+#### Manual Start (Advanced)
+
 macMLX can be served via a REST API server compatible with OpenAI format:
 
 ```bash
 # Start mlx-lm server (default: http://127.0.0.1:8080)
-mlx_lm.server --model mlx-community/Qwen2.5-7B-Instruct-4bit --port 8080
+python3 -m mlx_lm.server --model mlx-community/Qwen2.5-7B-Instruct-4bit --port 8080
 ```
+
+### Using the macMLX API
+
+The macMLX server provides an **OpenAI-compatible REST API** — it does **NOT** have a web interface. If you open `http://127.0.0.1:8080/` in a browser, you'll see "404 Not Found" — **this is expected behavior**!
+
+#### Available Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check — returns `{"status": "ok"}` |
+| `/v1/models` | GET | List available models |
+| `/v1/chat/completions` | POST | Chat completion (OpenAI-compatible) |
+| `/v1/completions` | POST | Text completion |
+
+#### Testing with curl
+
+**1. Health Check:**
+```bash
+curl http://127.0.0.1:8080/health
+# Response: {"status": "ok"}
+```
+
+**2. List Models:**
+```bash
+curl http://127.0.0.1:8080/v1/models | python3 -m json.tool
+```
+
+**3. Chat Completion:**
+```bash
+curl http://127.0.0.1:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+    "messages": [{"role": "user", "content": "Hello! What is 2+2?"}],
+    "max_tokens": 50
+  }' | python3 -m json.tool
+```
+
+**4. Text Completion:**
+```bash
+curl http://127.0.0.1:8080/v1/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+    "prompt": "Once upon a time",
+    "max_tokens": 100
+  }' | python3 -m json.tool
+```
+
+#### Using with Python (OpenAI SDK)
+
+The macMLX server is fully compatible with the OpenAI Python SDK:
+
+```python
+from openai import OpenAI
+
+# Point to local macMLX server
+client = OpenAI(
+    base_url="http://127.0.0.1:8080/v1",
+    api_key="not-needed"  # macMLX doesn't require authentication
+)
+
+# Chat completion
+response = client.chat.completions.create(
+    model="mlx-community/Qwen2.5-7B-Instruct-4bit",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "What is the capital of France?"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+#### Integration with VS Code Copilot (BYOK)
+
+You can configure VS Code Copilot to use your local macMLX server via "Bring Your Own Key" (BYOK):
+
+1. Open VS Code Settings
+2. Search for "Copilot: Advanced"
+3. Set custom endpoint: `http://127.0.0.1:8080/v1`
+4. Use any string as API key (not validated by macMLX)
+
+> **Note**: Check VS Code Copilot documentation for the latest BYOK configuration steps.
 
 ### LiteLLM Configuration for macMLX
 
