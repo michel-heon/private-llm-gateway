@@ -1,5 +1,321 @@
 # Scripts Directory
 
+Organisation des scripts pour le projet **private-llm-gateway**.
+
+> **🎯 Guide Rapide:** Scripts **Mac** (bash `.sh`) vs Scripts **Windows** (PowerShell `.ps1`)
+>
+> **📖 Navigation:**
+> - **[Utilisateurs Mac](#-sur-mac-macos-apple-silicon)** — Démarrage rapide
+> - **[Utilisateurs Windows](#-sur-windows-via-powershell)** — Setup tunnel SSH
+> - **[Architecture](#%EF%B8%8F-architecture)** — Comprendre le système
+> - **[Troubleshooting](#%EF%B8%8F-troubleshooting)** — Résoudre les problèmes
+> - **[Référence Technique](#-inventaire-complet-des-scripts)** — Détails des scripts et common.sh
+
+---
+
+## 📁 Structure
+
+```
+scripts/
+├── README.md                              ← Ce fichier
+│
+├── 🍎 Scripts Mac (bash)
+├── start-mac-server-with-tunnel-info.sh  ← Démarrer macMLX + afficher instructions Windows
+├── macmlx-start.sh                        ← Démarrer le serveur macMLX
+├── install-mlx.sh                         ← Installer les dépendances macMLX
+├── common.sh                              ← Bibliothèque partagée (ADR-603)
+├── start-ollama.sh                        ← Démarrer Ollama (alternative)
+├── start-litellm.sh                       ← Démarrer LiteLM proxy
+├── start-local-agent.sh                   ← Démarrer l'agent local Azure Relay
+├── check-local-endpoint.sh                ← Tester l'endpoint local
+└── check-public-endpoint.sh               ← Tester l'endpoint public
+│
+└── 🪟 Scripts Windows (PowerShell)
+    └── windows/
+        ├── README.md                      ← Documentation complète Windows
+        ├── start-mac-tunnel.ps1           ← Créer tunnel SSH Windows → Mac
+        └── test-mac-connection.ps1        ← Tester la connexion via tunnel
+```
+
+---
+
+## 🎯 Quel Script Utiliser?
+
+### 🍎 **Sur Mac (macOS, Apple Silicon)**
+
+#### Démarrage Simple
+```bash
+make macmlx-start              # Juste démarrer le serveur
+make macmlx-status             # Vérifier le statut
+make macmlx-stop               # Arrêter le serveur
+```
+
+#### Démarrage avec Instructions Windows
+```bash
+make macmlx-start-with-info    # Démarrer + afficher les instructions pour Windows
+# ou directement:
+./scripts/start-mac-server-with-tunnel-info.sh
+```
+
+**Ce que fait `start-mac-server-with-tunnel-info.sh`:**
+- ✅ Démarre le serveur macMLX sur le Mac
+- ✅ Affiche les 3 modèles disponibles
+- ✅ Affiche les instructions complètes pour Windows
+- ✅ Montre l'IP du Mac pour SSH
+- ✅ Montre les commandes de connexion
+
+---
+
+### 🪟 **Sur Windows (via PowerShell)**
+
+> **Tous les scripts Windows sont dans `scripts/windows/`**
+
+#### 1️⃣ Créer le Tunnel SSH
+```powershell
+cd scripts\windows
+.\start-mac-tunnel.ps1
+```
+
+**Ce que fait `start-mac-tunnel.ps1`:**
+- ✅ Détecte les conflits de port
+- ✅ Crée un tunnel SSH Windows → Mac
+- ✅ Forward le port 8080
+- ✅ Configure keepalive (60 secondes)
+- ✅ Garde le tunnel ouvert
+
+**⚠️ Important:** Laissez cette fenêtre PowerShell ouverte!
+
+#### 2️⃣ Tester la Connexion
+```powershell
+.\test-mac-connection.ps1
+```
+
+**Ce que fait `test-mac-connection.ps1`:**
+- ✅ Vérifie la santé du serveur
+- ✅ Liste les modèles disponibles
+- ✅ Teste une completion
+- ✅ Recommande le meilleur modèle
+
+#### 📚 Documentation Complète Windows
+Voir [scripts/windows/README.md](./windows/README.md) pour:
+- Troubleshooting détaillé
+- Configuration avancée (AutoSSH, Task Scheduler)
+- Guide complet
+
+---
+
+## 🏗️ Architecture
+
+### Scénario 1: Local Mac (pas de Windows)
+
+```
+┌─────────────────────────┐
+│  Mac (Local)            │
+│                         │
+│  ┌─────────────────┐    │
+│  │ macMLX Server   │    │
+│  │ Port: 8080      │    │
+│  └─────────────────┘    │
+│          ↑              │
+│          │              │
+│  ┌─────────────────┐    │
+│  │ VS Code Copilot │    │
+│  │ localhost:8080  │    │
+│  └─────────────────┘    │
+└─────────────────────────┘
+```
+
+**Scripts utilisés:**
+- `make macmlx-start` (Mac)
+- Configuration VS Code locale
+
+---
+
+### Scénario 2: Windows → Mac via SSH Tunnel
+
+```
+┌─────────────────────────┐
+│  Mac (192.168.7.116)    │
+│                         │
+│  ┌─────────────────┐    │
+│  │ macMLX Server   │    │
+│  │ Port: 8080      │    │
+│  └─────────────────┘    │
+│          ↑              │
+│          │ localhost    │
+│          ↓              │
+│  ┌─────────────────┐    │
+│  │ SSH Server      │    │
+│  │ Port: 22        │    │
+│  └─────────────────┘    │
+└─────────────────────────┘
+          ↑
+          │ SSH Tunnel
+          │ Port Forward: 8080 → 8080
+          │
+┌─────────────────────────┐
+│  Windows 11             │
+│                         │
+│  ┌─────────────────┐    │
+│  │ VS Code Copilot │    │
+│  │ localhost:8080  │    │
+│  └─────────────────┘    │
+│          ↑              │
+│          │              │
+│  ┌─────────────────┐    │
+│  │ SSH Client      │    │
+│  │ Tunnel Actif    │    │
+│  └─────────────────┘    │
+└─────────────────────────┘
+```
+
+**Scripts utilisés:**
+- `make macmlx-start-with-info` (Mac) — affiche instructions
+- `start-mac-tunnel.ps1` (Windows) — crée tunnel
+- `test-mac-connection.ps1` (Windows) — teste
+
+---
+
+## 🚀 Workflow Complet Windows → Mac
+
+### Première Fois (Setup)
+
+**1️⃣ Sur Mac:**
+```bash
+cd ~/path/to/private-llm-gateway
+make install                    # Installer les dépendances
+make macmlx-download MODEL=...  # Télécharger un modèle
+make macmlx-start-with-info     # Démarrer + voir instructions
+```
+
+**2️⃣ Sur Windows:**
+```powershell
+# Cloner le repo
+git clone https://github.com/michel-heon/private-llm-gateway.git
+cd private-llm-gateway\scripts\windows
+
+# Créer le tunnel
+.\start-mac-tunnel.ps1         # ← Laisser ouvert!
+
+# Dans un autre PowerShell:
+.\test-mac-connection.ps1      # Tester
+```
+
+**3️⃣ Configurer VS Code (Windows):**
+```json
+// settings.json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://localhost:8080/v1",
+    "model": "mlx-community/Codestral-22B-v0.1-4bit"
+  }
+}
+```
+
+**4️⃣ Recharger VS Code:**
+- `Ctrl + Shift + P` → `Developer: Reload Window`
+
+---
+
+### Usage Quotidien
+
+**Sur Mac (une fois par jour):**
+```bash
+make macmlx-start              # Démarrer le serveur
+```
+
+**Sur Windows (chaque session de travail):**
+```powershell
+cd scripts\windows
+.\start-mac-tunnel.ps1         # Créer le tunnel (garder ouvert)
+```
+
+> **💡 Astuce:** Configurez le tunnel pour démarrer automatiquement au boot Windows (voir [windows/README.md](./windows/README.md))
+
+---
+
+## 📊 Comparaison des Modèles
+
+| Modèle | Taille RAM | Usage Recommandé | Performance |
+|--------|-----------|------------------|-------------|
+| **Qwen2.5-7B-Instruct-4bit** | 4 GB | Polyvalent (défaut) | ⭐⭐⭐⭐ |
+| **Mistral-7B-Instruct-v0.3-4bit** | 3.8 GB | Conversationnel | ⭐⭐⭐ |
+| **Codestral-22B-v0.1-4bit** | 12 GB | Production de code | ⭐⭐⭐⭐⭐ |
+
+**Recommandation pour VS Code Copilot:** `Codestral-22B-v0.1-4bit`
+
+---
+
+## �️ Troubleshooting
+
+### Mac
+
+**Serveur ne démarre pas:**
+```bash
+make macmlx-status             # Vérifier le statut
+pkill -f mlx_lm.server         # Tuer le processus
+make macmlx-start              # Redémarrer
+```
+
+**Modèles manquants:**
+```bash
+make macmlx-download-status    # Vérifier les téléchargements
+make macmlx-download MODEL=... # Télécharger un modèle
+```
+
+### Windows
+
+**Tunnel ne se connecte pas:**
+```powershell
+# Tester SSH manuellement
+ssh michelheon@192.168.7.116
+
+# Vérifier les clés SSH
+ls $env:USERPROFILE\.ssh\
+```
+
+**Port 8080 déjà utilisé:**
+```powershell
+# Voir ce qui utilise le port
+Get-NetTCPConnection -LocalPort 8080
+
+# Tuer le processus
+Stop-Process -Id <PID> -Force
+```
+
+**Documentation complète:** [scripts/windows/README.md](./windows/README.md)
+
+---
+
+## 🎯 Quick Links
+
+### Mac Users
+```bash
+make help                      # Voir toutes les commandes
+make macmlx-start-with-info    # Démarrer avec instructions Windows
+```
+
+### Windows Users
+```powershell
+cd scripts\windows
+Get-Content README.md          # Documentation complète
+.\start-mac-tunnel.ps1         # Créer tunnel
+.\test-mac-connection.ps1      # Tester
+```
+
+---
+
+## 📚 Documentation Complète
+
+- **Setup Windows → Mac:** [../docs/guides/integration/windows-ssh-quick-start.md](../docs/guides/integration/windows-ssh-quick-start.md)
+- **VS Code BYOK:** [../docs/guides/integration/vscode-copilot-byok.md](../docs/guides/integration/vscode-copilot-byok.md)
+- **Scripts Windows:** [windows/README.md](./windows/README.md)
+- **README Principal:** [../README.md](../README.md)
+
+---
+
+## �📋 Inventaire Complet des Scripts
+
 This directory contains automation scripts for the private-llm-gateway project.
 
 ## 📋 Script Inventory

@@ -15,7 +15,7 @@ DEFAULT_MACMLX_MODEL := mlx-community/Qwen2.5-7B-Instruct-4bit
 DEFAULT_MACMLX_PORT  := 8080
 
 .PHONY: help check start-local test-local test-public \
-        install macmlx-download macmlx-download-status macmlx-start macmlx-stop macmlx-status
+        install macmlx-download macmlx-download-status macmlx-start macmlx-start-with-info macmlx-stop macmlx-status
 
 ##@ Help
 
@@ -99,6 +99,9 @@ macmlx-download-status: ## Show download progress for all models in cache
 macmlx-start: ## Start macMLX server (default: Qwen2.5-7B-Instruct-4bit on port 8080)
 	@printf "$(CYAN)➤ Starting macMLX server...$(NC)\n"
 	@./scripts/macmlx-start.sh
+
+macmlx-start-with-info: ## Start macMLX server and show Windows SSH tunnel instructions
+	@./scripts/start-mac-server-with-tunnel-info.sh
 
 macmlx-stop: ## Stop macMLX server
 	@printf "$(CYAN)➤ Stopping macMLX server...$(NC)\n"
