@@ -10,19 +10,18 @@
 ## 📋 Description
 
 **En tant que** développeur  
-**Je veux** standardiser la nomenclature des scripts selon [ADR-601](../../adr/601-DEVOPS-nomenclature-scripts.md)  
-**Afin de** garantir la cohérence et la découvrabilité
-
-> ⚠️ **Note importante** : L'ADR-601 accepte le pattern `{action}-{object}` (ex: `start-ollama.sh`) pour les scripts existants. Ce récit se concentre sur la **documentation** et la **validation** de la conformité, pas sur le renommage.
+**Je veux** renommer les scripts selon [ADR-601](../../adr/601-DEVOPS-nomenclature-scripts.md) (pattern `{object}-{action}`)  
+**Afin de** avoir une nomenclature cohérente et découvrable
 
 ---
 
 ## ✅ Critères d'Acceptation
 
-- [ ] Audit des scripts actuels (`scripts/`) - vérifier conformité ADR-601
-- [ ] Créer `scripts/README.md` avec liste et description de tous les scripts
-- [ ] Valider que tous les scripts suivent le pattern `{action}-{object}` ou `{object}-{action}`
-- [ ] Documenter conventions dans le README du projet
+- [ ] Audit des scripts actuels (`scripts/`)
+- [ ] Renommage selon pattern `{object}-{action}.sh`
+- [ ] Mise à jour des références dans Makefile et documentation
+- [ ] Tests après renommage (vérifier que tout fonctionne)
+- [ ] Création de `scripts/README.md`
 
 ---
 
@@ -37,100 +36,59 @@
 
 ## 🔗 Dépendances
 
-- 📄 [ADR-601](../../adr/601-DEVOPS-nomenclature-scripts.md) : Nomenclature scripts
-- ✅ [RECIT-202](RECIT-202-makefile-orchestrateur.md) : Makefile (pour cohérence targets)
+- 📄 [ADR-601](../../adr/601-DEVOPS-nomenclature-scripts.md) : Nomenclature scripts (pattern `{object}-{action}`)
+- ✅ [RECIT-202](RECIT-202-makefile-orchestrateur.md) : Makefile (pour mise à jour des targets)
 
 ---
 
-## 📝 Plan d'Audit et Documentation
+## 📝 Plan de Renommage
 
-### Scripts Existants (Conformité ADR-601)
+### Scripts Existants → Nouveaux Noms
 
-| Script Actuel | Pattern | Statut | Notes |
-|---------------|---------|--------|-------|
-| `start-ollama.sh` | `{action}-{object}` | ✅ Conforme | Pattern accepté par ADR-601 |
-| `start-litellm.sh` | `{action}-{object}` | ✅ Conforme | Pattern accepté par ADR-601 |
-| `start-local-agent.sh` | `{action}-{object}` | ✅ Conforme | Pattern accepté par ADR-601 |
-| `check-local-endpoint.sh` | `{action}-{object}-{scope}` | ✅ Conforme | Pattern accepté par ADR-601 |
-| `check-public-endpoint.sh` | `{action}-{object}-{scope}` | ✅ Conforme | Pattern accepté par ADR-601 |
+| Ancien Nom (❌ non conforme) | Nouveau Nom (✅ ADR-601) | Pattern |
+|------------------------------|--------------------------|---------|
+| `start-ollama.sh` | `ollama-start.sh` | `{object}-{action}` |
+| `start-litellm.sh` | `litellm-start.sh` | `{object}-{action}` |
+| `start-local-agent.sh` | `local-agent-start.sh` | `{object}-{action}` |
+| `check-local-endpoint.sh` | `local-endpoint-check.sh` | `{object}-{action}` |
+| `check-public-endpoint.sh` | `public-endpoint-check.sh` | `{object}-{action}` |
 
-**Conclusion** : Tous les scripts existants sont conformes à l'ADR-601 (pattern `{action}-{object}`).
-
-### Contenu du `scripts/README.md`
-
-```markdown
-# Scripts d'Automatisation
-
-Ce répertoire contient les scripts d'automatisation du projet **private-llm-gateway**.
-
-## Convention de Nommage
-
-Tous les scripts suivent la nomenclature **ADR-601** : `{action}-{object}.sh`
-
-## Scripts Disponibles
-
-### Services Locaux
-
-- **`start-ollama.sh`** : Démarre Ollama en local
-- **`start-litellm.sh`** : Démarre LiteLLM gateway
-- **`start-local-agent.sh`** : Démarre l'agent local (relay_agent.py)
-
-### Vérifications
-
-- **`check-local-endpoint.sh`** : Vérifie que l'endpoint local LiteLLM répond
-- **`check-public-endpoint.sh`** : Vérifie que l'endpoint public Azure répond
-
-### Usage
-
-\```bash
-# Démarrer tous les services locaux
-make start
-
-# Vérifier les endpoints
-./scripts/check-local-endpoint.sh
-\```
-
-Voir [ADR-601](../docs/adr/601-DEVOPS-nomenclature-scripts.md) pour la convention complète.
-```
-
----
-
-## 🧪 Tests & Validation
-
-### Checklist de Validation
+### Commandes de Renommage
 
 ```bash
-# 1. Audit des scripts
-ls -la scripts/*.sh
+# Préserver l'historique Git avec git mv
+cd scripts/
 
-# 2. Vérifier conformité nommage
-for script in scripts/*.sh; do
-  basename "$script"
-done
-
-# 3. Valider que tous fonctionnent
-make help           # Liste targets Makefile
-make start-ollama   # Test target
+git mv start-ollama.sh ollama-start.sh
+git mv start-litellm.sh litellm-start.sh  
+git mv start-local-agent.sh local-agent-start.sh
+git mv check-local-endpoint.sh local-endpoint-check.sh
+git mv check-public-endpoint.sh public-endpoint-check.sh
 ```
-
-### Critères de Validation
-
-- [ ] Tous les scripts suivent pattern `{action}-{object}` ou `{object}-{action}`
-- [ ] `scripts/README.md` créé et complet
-- [ ] Documentation à jour dans README principal
-- [ ] Targets Makefile cohérents avec noms de scripts
 
 ---
 
-## 📋 Checklist d'Implémentation
+## 🔄 Références à Mettre à Jour
 
-- [ ] Lister tous les scripts dans `scripts/`
-- [ ] Vérifier conformité avec ADR-601
-- [ ] Créer `scripts/README.md`
-- [ ] Ajouter section "Scripts" dans README principal
-- [ ] Valider cohérence Makefile targets
-- [ ] Tests manuels de tous les scripts
-- [ ] Commit et PR
+### 1. Makefile
+
+```makefile
+# Avant
+start-ollama:
+	@./scripts/start-ollama.sh
+
+# Après  
+ollama-start:
+	@./scripts/ollama-start.sh
+```
+
+### 2. Documentation
+
+Fichiers à mettre à jour :
+- `README.md` (section "Quick Start")
+- `docs/litellm-ollama.md`
+- `docs/local-macos-agent.md`
+- `docs/scrum/sprints/current-sprint.md`
 
 ### Documentation à Mettre à Jour
 
@@ -168,3 +126,37 @@ make help
 ---
 
 _Dernière mise à jour : 2026-06-05_
+ avec nouveaux noms)
+- [ ] `README.md` (section Quick Start)
+- [ ] `docs/litellm-ollama.md` (références scripts)
+- [ ] `docs/local-macos-agent.md` (références scripts)
+
+---
+
+## 🧪 Tests
+
+### Tests Post-Renommage
+
+```bash
+# Vérifier que les scripts sont exécutables
+ls -l scripts/*.sh | grep 'x'
+
+# Tester chaque script renommé
+./scripts/ollama-start.sh --help
+./scripts/litellm-start.sh --help
+./scripts/local-agent-start.sh --help
+./scripts/local-endpoint-check.sh
+./scripts/public-endpoint-check.sh
+
+# Vérifier targets Makefile
+make ollama-start
+make litellm-start
+```
+
+### Critères de Succès
+
+- [ ] Tous les scripts renommés sont exécutables
+- [ ] Aucun lien mort dans la documentation
+- [ ] Targets Makefile fonctionnent avec nouveaux noms
+- [ ] `git log --follow` montre l'historique préservé
+- [ ] GitHub détecte les renommages à 100%

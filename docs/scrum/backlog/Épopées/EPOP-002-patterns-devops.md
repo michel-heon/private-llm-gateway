@@ -34,11 +34,11 @@
 | Métrique | Cible | Actuel |
 |----------|-------|--------|
 | **Temps setup** | <10 minutes | 📊 Baseline à établir |
-| **Scripts conformes ADR-601** | 100% | ✅ 100% (scripts existants déjà conformes) |
+| **Scripts conformes ADR-601** | 100% | ❌ 0% (5 scripts à renommer) |
 | **Documentation scripts** | scripts/README.md | 🚧 À créer |
 | **Couverture tests** | ≥80% | 🚧 À implémenter |
 
-> ⚠️ **Note** : L'ADR-601 accepte le pattern `{action}-{object}` des scripts existants. Aucun renommage nécessaire.
+> ⚠️ **Note** : L'ADR-601 spécifie le pattern `{object}-{action}`. Les scripts actuels suivent `{action}-{object}` et doivent être renommés.
 
 ---
 
@@ -105,10 +105,12 @@ Points:   ░░░░░░░░░░░░░░░░░░░░ 0% (0/27 
 ```
 start-ollama.sh          → ollama-start.sh
 start-litellm.sh         → litellm-start.sh
-start-local-agent.sh     → agent-start.sh
-check-local-endpoint.sh  → endpoint-check-local.sh
-check-public-endpoint.sh → endpoint-check-public.sh
+start-local-agent.sh     → local-agent-start.sh
+check-local-endpoint.sh  → local-endpoint-check.sh
+check-public-endpoint.sh → public-endpoint-check.sh
 ```
+
+**Raison** : ADR-601 spécifie le pattern `{object}-{action}` pour cohérence et découvrabilité.
 
 ---
 
