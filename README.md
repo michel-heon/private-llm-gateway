@@ -64,6 +64,58 @@ See [/docs/reference/security.md](/docs/reference/security.md).
 
 ## Quick start overview
 
+### Scenario 1: Local macMLX (Apple Silicon Mac)
+
+**For development on macOS (Apple Silicon M1/M2/M3):**
+
+```bash
+# 1. Install dependencies (one-time setup)
+make install
+
+# 2. Download a model (optional, faster than on-demand)
+make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+
+# 3. Start macMLX server
+make macmlx-start
+
+# 4. Test the API
+make macmlx-status
+curl http://127.0.0.1:8080/health
+```
+
+**For VS Code Copilot BYOK configuration, see:**
+- [docs/guides/integration/vscode-copilot-byok.md](docs/guides/integration/vscode-copilot-byok.md)
+
+### Scenario 2: Windows VS Code → Mac via SSH
+
+**For Windows 11 users (Parallels Desktop) connecting to Mac:**
+
+```powershell
+# 1. On Windows: Start SSH tunnel (PowerShell)
+cd scripts\windows
+.\start-mac-tunnel.ps1
+# Keep this window open!
+
+# 2. On Windows: Test connection (another PowerShell window)
+.\test-mac-connection.ps1
+
+# 3. Configure VS Code (Windows)
+# Ctrl + Shift + P → "Preferences: Open User Settings (JSON)"
+# Add:
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://localhost:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  }
+}
+```
+
+**Complete Windows documentation:**
+- [scripts/windows/README.md](scripts/windows/README.md) — PowerShell scripts
+- [docs/guides/integration/windows-ssh-quick-start.md](docs/guides/integration/windows-ssh-quick-start.md) — Quick start guide
+
+### Scenario 3: Production (Azure HTTPS Proxy + Relay)
+
 1. Copy and edit example configs in `/config` and `.env.example`.
 2. Start Ollama locally: `make start-local` (or `scripts/start-ollama.sh`).
 3. Start LiteLLM on localhost: `scripts/start-litellm.sh`.
