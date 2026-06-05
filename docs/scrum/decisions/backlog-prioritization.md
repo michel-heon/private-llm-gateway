@@ -297,7 +297,7 @@ t │                     │                     │
 1. **Identifier le trigger** : Documenter la raison du changement
 2. **Évaluer l'impact** : Stories affectées, sprints concernés
 3. **Consulter personas** : Valider avec utilisateurs impactés
-4. **Mettre à jour backlog** : Modifier `product-backlog.md`
+4. **Mettre à jour backlog** : Modifier `README.md`
 5. **Documenter ici** : Ajouter entrée dans historique des décisions
 6. **Communiquer** : Slack/mail si multi-personne, commit message si solo
 
@@ -374,7 +374,7 @@ Certaines décisions de priorisation découlent d'ADRs existants :
 
 ### Liens Utiles
 
-- [Product Backlog complet](../product-backlog.md)
+- [Backlog complet (README)](../README.md)
 - [Sprint actuel](../sprints/current-sprint.md)
 - [ADR-001 : Adoption Scrum](../../adr/001-META-adoption-scrum.md)
 - [ADRs DevOps (600-607)](../../adr/)
