@@ -135,6 +135,9 @@ make install
 make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit
 make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
 
+# Check download progress (shows all models in cache)
+make macmlx-download-status
+
 # Start server with default model (Qwen2.5-7B-Instruct-4bit)
 make macmlx-start
 

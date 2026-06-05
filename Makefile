@@ -15,7 +15,7 @@ DEFAULT_MACMLX_MODEL := mlx-community/Qwen2.5-7B-Instruct-4bit
 DEFAULT_MACMLX_PORT  := 8080
 
 .PHONY: help check start-local test-local test-public \
-        install macmlx-download macmlx-start macmlx-stop macmlx-status
+        install macmlx-download macmlx-download-status macmlx-start macmlx-stop macmlx-status
 
 ##@ Help
 
@@ -63,6 +63,38 @@ macmlx-download: ## Download a macMLX model (Usage: make macmlx-download MODEL=m
 		huggingface-cli download "$(MODEL)" --repo-type model && \
 		printf "\n$(GREEN)✓ Model downloaded successfully$(NC)\n" && \
 		printf "  $(CYAN)→ Start server: ./scripts/macmlx-start.sh --model $(MODEL)$(NC)\n"
+
+macmlx-download-status: ## Show download progress for all models in cache
+	@printf "$(CYAN)➤ Checking model download status...$(NC)\n\n"
+	@if [ ! -d ~/.cache/huggingface/hub ]; then \
+		printf "$(YELLOW)⚠ No Hugging Face cache found$(NC)\n"; \
+		printf "  Cache directory: ~/.cache/huggingface/hub\n"; \
+		exit 0; \
+	fi; \
+	FOUND=0; \
+	for model_dir in ~/.cache/huggingface/hub/models--mlx-community--*; do \
+		if [ -d "$$model_dir" ]; then \
+			FOUND=1; \
+			MODEL_NAME=$$(basename "$$model_dir" | sed 's/models--mlx-community--/mlx-community\//'); \
+			SIZE=$$(du -sh "$$model_dir" 2>/dev/null | awk '{print $$1}'); \
+			INCOMPLETE=$$(find "$$model_dir/blobs" -name "*.incomplete" 2>/dev/null | wc -l | tr -d ' '); \
+			if [ "$$INCOMPLETE" -gt 0 ]; then \
+				printf "$(YELLOW)⏳ $$MODEL_NAME$(NC)\n"; \
+				printf "   Downloaded: $(BOLD)$$SIZE$(NC)\n"; \
+				printf "   Incomplete files: $(YELLOW)$$INCOMPLETE$(NC)\n"; \
+				printf "   Status: $(YELLOW)In progress...$(NC)\n"; \
+			else \
+				printf "$(GREEN)✓ $$MODEL_NAME$(NC)\n"; \
+				printf "   Size: $(BOLD)$$SIZE$(NC)\n"; \
+				printf "   Status: $(GREEN)Complete$(NC)\n"; \
+			fi; \
+			printf "\n"; \
+		fi; \
+	done; \
+	if [ $$FOUND -eq 0 ]; then \
+		printf "$(YELLOW)⚠ No mlx-community models found in cache$(NC)\n"; \
+		printf "  $(CYAN)→ Download a model: make macmlx-download MODEL=...$(NC)\n"; \
+	fi
 
 macmlx-start: ## Start macMLX server (default: Qwen2.5-7B-Instruct-4bit on port 8080)
 	@printf "$(CYAN)➤ Starting macMLX server...$(NC)\n"
