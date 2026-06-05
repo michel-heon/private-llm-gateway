@@ -78,6 +78,8 @@ docs/scrum/backlog/
 | [RECIT-204](backlog/Récits/RECIT-204-couleurs-ansi.md) | Ajouter couleurs ANSI aux scripts | Should Have | 3 pts | S2 | 📋 To Do |
 | [RECIT-205](backlog/Récits/RECIT-205-parsing-options-bash.md) | Parsing options Bash standard | Should Have | 5 pts | S2 | 📋 To Do |
 
+> ⚠️ **Note ADR-601** : L'ADR-601 accepte le pattern `{action}-{object}` pour les scripts existants (ex: `start-ollama.sh`). Le RECIT-203 se concentre sur la documentation et la validation de conformité, **pas sur le renommage** des scripts.
+
 **Total Epic 2** : 27 points
 
 ---

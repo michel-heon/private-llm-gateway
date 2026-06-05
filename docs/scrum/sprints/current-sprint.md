@@ -23,7 +23,7 @@
 2. 🚧 **Scripts de démarrage macMLX** (`start-macmlx.sh`, cibles Make)
 3. 🚧 **Système de configuration multi-format** (bootstrap .env)
 4. 🚧 **Makefile orchestrateur** avec cibles standardisées
-5. 🚧 **Scripts renommés** selon nomenclature ADR-601
+5. 🚧 **Documentation scripts** selon nomenclature ADR-601
 
 **Critère de succès** : Un utilisateur Mac M1/M2/M3 peut démarrer macMLX + LiteLLM avec `make macmlx-start` en une commande.
 
@@ -121,16 +121,12 @@
 
 **Tâches** :
 - [ ] Audit scripts actuels (`scripts/`)
-- [ ] Renommer selon pattern `{object}-{action}.sh`
-  - `start-ollama.sh` → `ollama-start.sh`
-  - `start-litellm.sh` → `litellm-start.sh`
-  - `start-local-agent.sh` → `agent-start.sh`
-  - `check-local-endpoint.sh` → `endpoint-check-local.sh`
-  - `check-public-endpoint.sh` → `endpoint-check-public.sh`
-- [ ] Mettre à jour références dans Makefile et docs
-- [ ] Tests après renommage
+- [ ] Créer `scripts/README.md` avec liste de tous les scripts
+- [ ] Valider conformité avec ADR-601 (pattern `{action}-{object}`)
+- [ ] Documenter conventions dans README principal
+- [ ] Tests de validation
 
-**Notes** : Suivre ADR-601 (nomenclature scripts)
+**Notes** : Suivre ADR-601 (nomenclature scripts). Les scripts existants sont déjà conformes - ce récit se concentre sur la **documentation** et la **validation**.
 
 ---
 

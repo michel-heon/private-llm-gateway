@@ -34,8 +34,11 @@
 | Métrique | Cible | Actuel |
 |----------|-------|--------|
 | **Temps setup** | <10 minutes | 📊 Baseline à établir |
-| **Scripts conformes** | 100% | 0% (5 scripts à renommer) |
+| **Scripts conformes ADR-601** | 100% | ✅ 100% (scripts existants déjà conformes) |
+| **Documentation scripts** | scripts/README.md | 🚧 À créer |
 | **Couverture tests** | ≥80% | 🚧 À implémenter |
+
+> ⚠️ **Note** : L'ADR-601 accepte le pattern `{action}-{object}` des scripts existants. Aucun renommage nécessaire.
 
 ---
 
