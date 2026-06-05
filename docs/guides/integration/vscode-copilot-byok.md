@@ -19,17 +19,28 @@ This guide covers two scenarios:
 
 ## Scenario 1: Local macMLX (Apple Silicon)
 
-### Step 1: Start macMLX Server
+### Step 1: Install and Download Model
 
 ```bash
-# Install and start macMLX
-make install           # One-time setup
-make macmlx-start      # Start server
+# Install dependencies (one-time setup)
+make install
+
+# Pre-download a coding-optimized model (recommended, much faster than on-demand)
+make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+
+# Or use default model (Qwen2.5-7B - general purpose)
+make macmlx-start
 
 # Verify it's running
 make macmlx-status
 curl http://127.0.0.1:8080/v1/models
 ```
+
+**Model Download Tips:**
+- Pre-downloading saves 5-30 minutes on first startup
+- Download runs in background (multi-threaded)
+- Models are cached in `~/.cache/huggingface/hub/`
+- See [recommended coding models](#coding-models-recommended) below
 
 ### Step 2: Configure VS Code Settings
 
@@ -95,6 +106,37 @@ When your LiteLLM proxy is deployed to Azure with HTTPS endpoint:
 
 ## Available Models
 
+### Coding Models (Recommended)
+
+For **code generation with minimal hallucinations**, use these specialized models:
+
+| Model | Size | RAM | Speed | Code Quality | Best For |
+|-------|------|-----|-------|--------------|----------|
+| **DeepSeek-Coder-V2.5-7B** | 7B | ~4GB | Fast | ⭐⭐⭐⭐⭐ | Code, debug, refactoring |
+| **Qwen2.5-Coder-7B** | 7B | ~4GB | Fast | ⭐⭐⭐⭐⭐ | Code reviews, best practices |
+| **Qwen2.5-Coder-14B** | 14B | ~8GB | Medium | ⭐⭐⭐⭐⭐ | Complex code, architecture |
+| **Codestral-22B** | 22B | ~14GB | Slow | ⭐⭐⭐⭐⭐ | Production code (M2 Max/M3+) |
+| Qwen2.5-7B (default) | 7B | ~4GB | Fast | ⭐⭐⭐⭐ | General purpose |
+
+**Download and use a coding model:**
+```bash
+# Pre-download (recommended)
+make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+
+# Start with coding model
+./scripts/macmlx-start.sh --model mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+```
+
+**VS Code configuration:**
+```json
+{
+  "github.copilot.advanced": {
+    "endpoint": "http://127.0.0.1:8080/v1",
+    "model": "mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit"
+  }
+}
+```
+
 ### macMLX (Local - Port 8080)
 
 Check available models:
@@ -102,10 +144,7 @@ Check available models:
 curl http://127.0.0.1:8080/v1/models | python3 -m json.tool
 ```
 
-Common models:
-- `mlx-community/Qwen2.5-7B-Instruct-4bit` (default)
-- `mlx-community/Mistral-7B-Instruct-v0.3-4bit`
-- Any model from [Hugging Face MLX Community](https://huggingface.co/mlx-community)
+Browse all models at [Hugging Face MLX Community](https://huggingface.co/mlx-community)
 
 ### LiteLLM (Local - Port 4000 or Remote)
 
@@ -191,21 +230,44 @@ top -pid $(pgrep -f mlx_lm.server)
 ```
 
 **Optimize:**
+- **Pre-download models:** `make macmlx-download MODEL=...` (eliminates first-load delay)
 - Use 4-bit quantized models (smaller, faster)
 - Close other applications to free RAM
-- Choose smaller models (7B vs 13B)
+- Choose smaller models: 7B for speed, 14B/22B for quality
+- Lower temperature in VS Code settings: `"temperature": 0.1` (reduces hallucinations)
 
 ---
 
 ## Performance Tips
 
-### Model Selection
+### Model Selection by Hardware
 
-| Model Size | RAM Required | Speed | Quality |
-|------------|--------------|-------|---------|
-| 3B (4-bit) | ~2GB | Very Fast | Good |
-| 7B (4-bit) | ~4GB | Fast | Excellent |
-| 13B (4-bit) | ~8GB | Medium | Outstanding |
+**M1/M2 (8-16GB RAM):**
+```bash
+make macmlx-download MODEL=mlx-community/DeepSeek-Coder-V2.5-7B-Instruct-4bit
+```
+✅ Best balance: performance + quality
+
+**M2 Pro/Max or M3 (32GB+ RAM):**
+```bash
+make macmlx-download MODEL=mlx-community/Qwen2.5-Coder-14B-Instruct-4bit
+```
+✅ Maximum code quality
+
+**Mac Studio/M2 Max+ (64GB+ RAM):**
+```bash
+make macmlx-download MODEL=mlx-community/Codestral-22B-v0.1-4bit
+```
+✅ Production-grade code generation
+
+### Model Size Reference
+
+| Model Type | Size | RAM Required | Speed | Code Quality |
+|------------|------|--------------|-------|-------------|
+| 3B (4-bit) | ~2GB | ~2GB | Very Fast | Good |
+| 7B (4-bit) | ~4GB | ~4GB | Fast | Excellent |
+| 14B (4-bit) | ~8GB | ~8GB | Medium | Outstanding |
+| 22B (4-bit) | ~13GB | ~14GB | Slow | Premium |
 
 ### macMLX vs Ollama
 
