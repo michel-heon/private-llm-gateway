@@ -96,6 +96,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 | [602](./602-DEVOPS-makefile-orchestrateur.md) | Makefile comme Orchestrateur de Scripts | ✅ Accepté | 2026-06-05 | DevOps |
 | [603](./603-DEVOPS-reutilisation-code-principe-dry.md) | Réutilisation du Code et Principe DRY (Don't Repeat Yourself) | ✅ Accepté | 2026-06-05 | DevOps |
 | [605](./605-DEVOPS-gestion-couleurs-scripts-make.md) | Gestion des couleurs dans les scripts Make | ✅ Accepté | 2026-06-05 | DevOps |
+| [606](./606-DEVOPS-architecture-vscode-remote-ssh.md) | Architecture VS Code Remote SSH - Windows VM vers Mac | ✅ Accepté | 2026-06-07 | DevOps |
 | [607](./607-DEVOPS-gestion-options-scripts-bash.md) | Gestion des Options dans les Scripts Bash | ✅ Accepté | 2026-06-05 | DevOps |
 
 ---
@@ -120,12 +121,12 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 
 | Indicateur | Valeur |
 |-----------|--------|
-| **Total ADRs** | 8 |
-| **Acceptés** | 8 |
+| **Total ADRs** | 9 |
+| **Acceptés** | 9 |
 | **Supersédés** | 0 |
 | **Proposés** | 0 |
 | **Brouillons** | 0 |
-| **Par Domaine** | META: 2, DEVOPS: 6 |
+| **Par Domaine** | META: 2, DEVOPS: 7 |
 
 ---
 
@@ -139,7 +140,7 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 | `SEC` | 300-399 | Sécurité, authentification, TLS | 300 |
 | `DATA` | 400-499 | Modèles, configuration, persistance | 400 |
 | `API` | 500-599 | Interfaces REST, OpenAI compatibility, LiteLLM | 500 |
-| `DEVOPS` | 600-699 | CI/CD, automation, scripts | 604, 606, 608+ |
+| `DEVOPS` | 600-699 | CI/CD, automation, scripts | 604, 608+ |
 | `TEST` | 700-799 | Tests, validation, monitoring | 700 |
 | `BIZ` | 800-899 | Licensing, distribution | 800 |
 
@@ -170,4 +171,4 @@ git commit -m "docs(adr): ADR-606 [DEVOPS] Nouvelle décision"
 
 ---
 
-_Mise à jour : 2026-06-05_
+_Mise à jour : 2026-06-07_
